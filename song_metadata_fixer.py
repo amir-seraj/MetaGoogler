@@ -94,9 +94,43 @@ class SongMetadataFixer:
         """Check if file is a supported audio format"""
         return file_path.suffix.lower() in self.SUPPORTED_FORMATS
     
+    def _is_file_corrupted(self, file_path: Path) -> bool:
+        """Check if file is corrupted or invalid"""
+        try:
+            with open(file_path, 'rb') as f:
+                header = f.read(20)
+                # Check for common non-audio headers
+                if header.startswith(b'<'):  # HTML/XML error page
+                    return True
+                if header.startswith(b'PK'):  # ZIP file
+                    return True
+                if header.startswith(b'%PDF'):  # PDF file
+                    return True
+                # Valid audio file indicators
+                if any([
+                    header.startswith(b'ID3'),      # ID3v2 (MP3)
+                    header.startswith(b'\xff\xfb'),  # MP3 frame sync (MPEG1 Layer3)
+                    header.startswith(b'\xff\xfa'),  # MP3 frame sync (MPEG2 Layer3)
+                    b'ftyp' in header[:20],         # MP4/M4A (ftyp at offset 4)
+                    header.startswith(b'fLaC'),      # FLAC
+                    header.startswith(b'OggS'),      # Ogg/Vorbis
+                    header.startswith(b'RIFF'),      # WAV
+                    header.startswith(b'wvpk'),      # WavPack
+                ]):
+                    return False
+                # No recognizable audio header
+                return True
+        except Exception:
+            return True
+        return False
+    
     def get_metadata(self, file_path: Path) -> Optional[dict]:
         """Extract metadata from audio file"""
         try:
+            # Check for corrupted files first
+            if self._is_file_corrupted(file_path):
+                raise Exception(f"File appears to be corrupted or not a valid audio file (invalid header)")
+            
             # Try with MP4 handler first (M4A, M4B, etc.)
             if str(file_path).lower().endswith(('.m4a', '.m4b', '.m4p', '.aac')):
                 try:
@@ -127,6 +161,7 @@ class SongMetadataFixer:
             print(f"Error reading {file_path.name}: {e}")
             self.error_count += 1
             return None
+
     
     def validate_metadata(self, metadata: dict, filename: str = "") -> Tuple[bool, List[str]]:
         """Validate metadata completeness and correctness"""
