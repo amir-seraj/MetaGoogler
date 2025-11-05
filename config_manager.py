@@ -5,6 +5,8 @@ Provides a single source of truth for all application settings.
 
 import json
 import logging
+import os
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -28,7 +30,32 @@ class ConfigManager:
             return
         
         self.logger = logging.getLogger(__name__)
-        self.config_path = config_path or (Path(__file__).parent / "config.json")
+        
+        # Handle config path resolution for both normal and PyInstaller execution
+        if config_path:
+            self.config_path = config_path
+        else:
+            # Try multiple locations to find config.json
+            possible_paths = [
+                Path(__file__).parent / "config.json",  # Normal execution
+                Path(sys.executable).parent / "config.json",  # PyInstaller exe directory
+                Path(os.getcwd()) / "config.json",  # Current working directory
+            ]
+            
+            # If running as PyInstaller bundle, try the bundle location
+            if getattr(sys, 'frozen', False):
+                bundle_dir = Path(sys.executable).parent
+                possible_paths.insert(0, bundle_dir / "config.json")
+            
+            self.config_path = None
+            for path in possible_paths:
+                if path.exists():
+                    self.config_path = path
+                    break
+            
+            if self.config_path is None:
+                self.config_path = possible_paths[0]  # Default fallback
+        
         self._config = self._load_config()
         self._initialized = True
         self.logger.debug(f"ConfigManager initialized with {self.config_path}")

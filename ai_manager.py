@@ -6,10 +6,11 @@ Handles model checking, downloading, loading, and prompt execution.
 import json
 import logging
 import subprocess
+import sys
+import os
 from pathlib import Path
 from typing import Optional, Dict, Any
 import urllib.request
-import os
 
 
 class AIManager:
@@ -32,7 +33,26 @@ class AIManager:
     def _load_config(self, config_path: Optional[Path] = None) -> Dict[str, Any]:
         """Load configuration from JSON file."""
         if config_path is None:
-            config_path = Path(__file__).parent / "config.json"
+            # Try multiple locations to find config.json
+            possible_paths = [
+                Path(__file__).parent / "config.json",  # Normal execution
+                Path(sys.executable).parent / "config.json",  # PyInstaller exe directory
+                Path(os.getcwd()) / "config.json",  # Current working directory
+            ]
+            
+            # If running as PyInstaller bundle, try the bundle location
+            if getattr(sys, 'frozen', False):
+                bundle_dir = Path(sys.executable).parent
+                possible_paths.insert(0, bundle_dir / "config.json")
+            
+            config_path = None
+            for path in possible_paths:
+                if path.exists():
+                    config_path = path
+                    break
+            
+            if config_path is None:
+                config_path = possible_paths[0]  # Default fallback
         
         try:
             with open(config_path, 'r') as f:
