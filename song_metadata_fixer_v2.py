@@ -511,38 +511,66 @@ class SongMetadataFixer:
                 self.logger.error(msg)
                 return OperationResult(False, msg)
             
+            mime_type = f"image/{cover_path.suffix[1:].lower()}"
+            embedded = False
+            
             # Embed in MP4/M4A
             if isinstance(audio, MP4):
-                audio.tags['covr'] = [image_data]
-                audio.save()
+                try:
+                    audio.tags['covr'] = [image_data]
+                    audio.save()
+                    embedded = True
+                    self.logger.debug(f"Embedded MP4 cover art: {file_path.name}")
+                except Exception as e:
+                    self.logger.error(f"Failed to embed MP4 cover: {e}")
+                    return OperationResult(False, f"Error embedding MP4 cover: {str(e)}")
             
             # Embed in FLAC
             elif isinstance(audio, FLAC):
-                pic = FLAC.Picture()
-                pic.data = image_data
-                pic.mime = f"image/{cover_path.suffix[1:].lower()}"
-                audio.add_picture(pic)
-                audio.save()
+                try:
+                    pic = FLAC.Picture()
+                    pic.data = image_data
+                    pic.mime = mime_type
+                    audio.add_picture(pic)
+                    audio.save()
+                    embedded = True
+                    self.logger.debug(f"Embedded FLAC cover art: {file_path.name}")
+                except Exception as e:
+                    self.logger.error(f"Failed to embed FLAC cover: {e}")
+                    return OperationResult(False, f"Error embedding FLAC cover: {str(e)}")
             
-            # Embed in MP3
-            elif hasattr(audio, 'tags') and audio.tags:
-                audio.tags['APIC'] = APIC(
-                    encoding=3,
-                    mime=f"image/{cover_path.suffix[1:].lower()}",
-                    type=3,
-                    desc='Cover',
-                    data=image_data
-                )
-                audio.save()
+            # Embed in MP3 (ID3)
+            elif hasattr(audio, 'tags') and audio.tags is not None:
+                try:
+                    apic = APIC(
+                        encoding=3,
+                        mime=mime_type,
+                        type=3,  # type=3 means front cover
+                        desc='Cover',
+                        data=image_data
+                    )
+                    audio.tags['APIC'] = apic
+                    audio.save()
+                    embedded = True
+                    self.logger.debug(f"Embedded MP3 cover art: {file_path.name}")
+                except Exception as e:
+                    self.logger.error(f"Failed to embed MP3 cover: {e}")
+                    return OperationResult(False, f"Error embedding MP3 cover: {str(e)}")
             
             else:
                 msg = f"Cover art embedding not supported for {file_path.suffix}"
                 self.logger.warning(msg)
                 return OperationResult(False, msg)
             
-            self.logger.info(f"Embedded cover art: {file_path.name}")
-            self.cover_fixed += 1
-            return OperationResult(True, f"Embedded cover art: {file_path.name}")
+            # Verify embedding was successful
+            if embedded and self.has_cover_art(file_path):
+                self.logger.info(f"✓ Embedded cover art: {file_path.name}")
+                self.cover_fixed += 1
+                return OperationResult(True, f"Embedded cover art: {file_path.name}")
+            else:
+                msg = f"Failed to verify cover art embedding in {file_path.name}"
+                self.logger.error(msg)
+                return OperationResult(False, msg)
         
         except Exception as e:
             self.logger.error(f"Error embedding cover art: {e}")
