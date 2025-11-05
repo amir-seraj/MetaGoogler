@@ -28,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from song_metadata_fixer_v2 import SongMetadataFixer, OperationResult
 from config_manager import ConfigManager
 from logger_setup import get_logger
+from ai_manager import AIManager
 
 logger = get_logger(__name__)
 
@@ -45,6 +46,7 @@ class MetadataFixerGUI:
         # Initialize config and fixer
         self.config = ConfigManager()
         self.fixer = SongMetadataFixer()
+        self.ai_manager = AIManager()
         self.current_folder: Optional[Path] = None
         self.audio_files: list = []
         
@@ -160,6 +162,7 @@ class MetadataFixerGUI:
             ("Validate Metadata", self._on_validate_all, "light blue"),
             ("Fix Whitespace", self._on_fix_whitespace_all, "light green"),
             ("Embed Cover Art", self._on_embed_cover_art_all, "light yellow"),
+            ("Get AI Suggestions", self._on_ai_suggestions, "#FF9500"),  # Orange for AI
             ("View Metadata", self._on_view_metadata, "light gray"),
             ("Refresh List", self._on_refresh_files, "light gray"),
         ]
@@ -435,6 +438,87 @@ class MetadataFixerGUI:
                 messagebox.showerror("Error", result.message)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to read metadata: {e}")
+    
+    def _on_ai_suggestions(self):
+        """Get AI suggestions for selected file."""
+        selection = self.file_listbox.curselection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a file from the list.")
+            return
+        
+        file = self.audio_files[selection[0]]
+        
+        # Check if Ollama is available
+        try:
+            import ollama
+        except ImportError:
+            messagebox.showerror(
+                "Error",
+                "Ollama is not installed.\n\nInstall with: pip install ollama\n\n"
+                "Also make sure Ollama server is running:\n"
+                "ollama serve"
+            )
+            return
+        
+        # Run in thread to avoid freezing
+        self._run_threaded_task(
+            lambda prog, log: self._ai_suggestions_worker(prog, log, file),
+            "Getting AI suggestions..."
+        )
+    
+    def _ai_suggestions_worker(self, progress_callback, log_callback, file):
+        """Worker thread for getting AI suggestions."""
+        try:
+            # Get current metadata
+            metadata = self.fixer.get_metadata(file)
+            if metadata is None:
+                log_callback(f"Could not read metadata: {file.name}")
+                return
+            
+            progress_callback(0.3, "Analyzing with AI...")
+            log_callback(f"Analyzing: {file.name}")
+            
+            # Get AI suggestions
+            suggestions = self.ai_manager.get_ai_suggestions(file.name, metadata)
+            
+            if suggestions is None:
+                log_callback("Error: Could not get suggestions from AI")
+                progress_callback(1.0, "Error getting suggestions")
+                return
+            
+            progress_callback(0.7, "Opening suggestions window...")
+            
+            # Open suggestion window on main thread
+            def show_suggestions():
+                try:
+                    from suggestion_window import SuggestionWindow
+                    window = SuggestionWindow(self.root, metadata, suggestions)
+                    self.root.wait_window(window)
+                    
+                    if window.approved_changes:
+                        # Apply approved changes
+                        final_metadata = metadata.copy()
+                        final_metadata.update(window.approved_changes)
+                        
+                        result = self.fixer.set_metadata(file, final_metadata)
+                        if result and result.success:
+                            log_callback(f"✓ Applied AI suggestions to: {file.name}")
+                        else:
+                            log_callback(f"✗ Failed to apply suggestions: {result.message if result else 'Unknown error'}")
+                    else:
+                        log_callback(f"Suggestions cancelled for: {file.name}")
+                except ImportError:
+                    log_callback("Error: Could not import SuggestionWindow")
+                except Exception as e:
+                    log_callback(f"Error applying suggestions: {e}")
+                finally:
+                    progress_callback(1.0, "Ready")
+            
+            self.root.after(0, show_suggestions)
+            
+        except Exception as e:
+            log_callback(f"Error: {e}")
+            progress_callback(1.0, "Error")
     
     def _run_threaded_task(self, worker_func: Callable, initial_message: str):
         """Run a long task in a separate thread to keep GUI responsive."""

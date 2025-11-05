@@ -1,6 +1,7 @@
 """
 AIManager: Encapsulates all LLM operations and model management.
 Handles model checking, downloading, loading, and prompt execution.
+Provides metadata suggestions via structured prompting and JSON parsing.
 """
 
 import json
@@ -8,9 +9,14 @@ import logging
 import subprocess
 import sys
 import os
+import re
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import urllib.request
+try:
+    import ollama
+except ImportError:
+    ollama = None
 
 
 class AIManager:
@@ -227,6 +233,115 @@ Fix common issues like extra spaces, invalid years, missing values.
         self.logger.debug("Requesting AI metadata fix")
         return self.prompt(prompt, json_mode=True)
     
+    def get_ai_suggestions(self, filename: str, current_metadata: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        Get AI metadata suggestions for a file using Ollama.
+        
+        This is the "AI Brain" for intelligent metadata extraction and cleaning.
+        It handles messy filenames, cleans existing tags, and suggests improvements.
+        
+        Args:
+            filename: The audio filename (may contain metadata clues)
+            current_metadata: Current metadata dict with artist, title, album, etc.
+        
+        Returns:
+            Dictionary with suggested values (artist, title, album, version_info, genre, moods)
+            or None if the request failed
+        """
+        
+        # Build the detailed prompt
+        prompt = self._build_ai_prompt(filename, current_metadata)
+        
+        self.logger.debug("Requesting AI suggestions from Ollama")
+        
+        try:
+            # Check if ollama is available
+            if not ollama:
+                self.logger.error("Ollama module not installed. Install with: pip install ollama")
+                return None
+            
+            # Query Ollama with JSON format enforcement
+            response = ollama.chat(
+                model=self.model_name,
+                messages=[{'role': 'user', 'content': prompt}],
+                format='json',
+                stream=False,
+            )
+            
+            # Extract the response content
+            response_text = response.get('message', {}).get('content', '')
+            
+            if not response_text:
+                self.logger.warning("Empty response from Ollama")
+                return None
+            
+            # Parse JSON response
+            try:
+                suggestions = json.loads(response_text)
+                self.logger.debug(f"Successfully parsed AI suggestions: {suggestions}")
+                return suggestions
+            except json.JSONDecodeError as e:
+                self.logger.error(f"Failed to parse AI response as JSON: {e}")
+                self.logger.debug(f"Raw response: {response_text}")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"Error getting AI suggestions: {e}")
+            return None
+    
+    def _build_ai_prompt(self, filename: str, current_meta: Dict[str, Any]) -> str:
+        """
+        Build a detailed, structured prompt for the LLM.
+        
+        This prompt is engineered to:
+        1. Parse messy filenames
+        2. Clean existing metadata
+        3. Extract version information
+        4. Suggest genres and moods
+        5. Return valid JSON
+        
+        Args:
+            filename: The audio file name
+            current_meta: Current metadata dictionary
+        
+        Returns:
+            Prompt string for the LLM
+        """
+        
+        prompt = f"""You are a highly accurate music metadata analyst. Your task is to analyze the provided song information and extract clean, structured metadata. You must respond with ONLY a single, valid JSON object and absolutely no other text.
+
+Analyze this data:
+- Filename: "{filename}"
+- Existing Artist Tag: "{current_meta.get('artist', 'N/A')}"
+- Existing Title Tag: "{current_meta.get('title', 'N/A')}"
+- Existing Album Tag: "{current_meta.get('album', 'N/A')}"
+- Existing Genre Tag: "{current_meta.get('genre', 'N/A')}"
+
+Perform these tasks:
+1. Extract the correct artist, title, and album from the filename and existing tags.
+2. Clean the title by removing junk like "[Official Video]", "(HD)", "[Official Audio]", etc.
+3. Identify any "version" information, like (Live), (Remaster), (Acoustic), (Remix), etc.
+4. Suggest a primary genre (if not already present or if the current one seems wrong).
+5. Suggest up to three relevant moods/themes (e.g., "energetic", "melancholic", "dance", "groovy").
+6. If the artist has featured artists or collaborations, suggest extracting them.
+
+Return ONLY this JSON format. If a field cannot be determined with confidence, use an empty string "":
+
+{{
+  "artist": "correct artist name",
+  "title": "cleaned title without junk",
+  "album": "album name if identifiable",
+  "version_info": "Live, Remaster, Acoustic, etc. or empty",
+  "genre": "primary genre suggestion",
+  "moods": ["mood1", "mood2", "mood3"],
+  "confidence": "high|medium|low",
+  "notes": "brief explanation of any assumptions made"
+}}
+
+Return ONLY valid JSON, no other text."""
+        
+        return prompt
+    
     def get_status(self) -> Dict[str, Any]:
         """Get current status of the AI manager."""
         return {
@@ -234,5 +349,6 @@ Fix common issues like extra spaces, invalid years, missing values.
             "model_path": str(self.model_path),
             "model_exists": self.model_exists(),
             "model_loaded": self.model_loaded,
-            "config_loaded": self.config is not None
+            "config_loaded": self.config is not None,
+            "ollama_available": ollama is not None
         }
