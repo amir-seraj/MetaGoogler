@@ -8,3 +8,5 @@
 2025-11-05 20:08:42,023 - SongMetadataFixer - INFO - Fixing: audio.m4a
 2025-11-05 20:08:42,025 - SongMetadataFixer - INFO - Updated MP4 tags: audio.m4a
 2025-11-05 20:08:52,512 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-05 20:26:18,093 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-05 20:26:18,180 - __main__ - INFO - Application started. Select a music folder to begin.
