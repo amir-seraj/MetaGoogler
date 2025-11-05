@@ -1,0 +1,31 @@
+{
+  "supported_formats": [
+    ".mp3", ".m4a", ".m4b", ".m4p", ".aac",
+    ".flac", ".ogg", ".opus", ".wav", ".wma",
+    ".alac", ".dsf", ".dff", ".ape"
+  ],
+  "cover_art": {
+    "max_size_kb": 500,
+    "max_width_px": 3000,
+    "max_height_px": 3000,
+    "allowed_formats": ["jpeg", "jpg", "png", "gif", "bmp"]
+  },
+  "ai_model": {
+    "name": "phi3",
+    "download_url": "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct",
+    "model_path": "./models/phi3"
+  },
+  "logging": {
+    "level": "INFO",
+    "log_file": "fixer.log",
+    "console_format": "%(asctime)s - %(levelname)s - %(message)s",
+    "file_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  },
+  "metadata": {
+    "whitespace_normalization": true,
+    "artist_field": "©ART",
+    "title_field": "©nam",
+    "album_field": "©alb",
+    "date_field": "©day"
+  }
+}
