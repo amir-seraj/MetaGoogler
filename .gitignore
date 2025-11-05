@@ -1,0 +1,27 @@
+# Test data and generated files
+/music/
+*.mp3
+*.m4a
+*.m4b
+*.m4p
+*.aac
+*.flac
+*.wav
+*.ogg
+*.wma
+test_cover.jpg
+metadata_report.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
