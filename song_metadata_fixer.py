@@ -417,6 +417,10 @@ class SongMetadataFixer:
                 except Exception:
                     pass
             
+            # Check for MP4/M4A covr atoms
+            if isinstance(audio, MP4):
+                return audio.tags is not None and 'covr' in audio.tags
+            
             # Check for FLAC metadata blocks
             if isinstance(audio, FLAC):
                 return len(audio.pictures) > 0
@@ -516,8 +520,13 @@ class SongMetadataFixer:
                 print(f"Error: Cannot read {file_path.name}")
                 return False
             
+            # Embed in MP4/M4A
+            if isinstance(audio, MP4):
+                audio.tags['covr'] = [image_data]
+                audio.save()
+            
             # Embed in FLAC
-            if isinstance(audio, FLAC):
+            elif isinstance(audio, FLAC):
                 pic = FLAC.Picture()
                 pic.data = image_data
                 pic.mime = f"image/{cover_path.suffix[1:].lower()}"
