@@ -214,6 +214,40 @@ class SongMetadataFixer:
     def set_metadata(self, file_path: Path, metadata: dict) -> bool:
         """Write metadata to audio file"""
         try:
+            # Handle M4A/M4B/M4P/AAC files with MP4 handler
+            if str(file_path).lower().endswith(('.m4a', '.m4b', '.m4p', '.aac')):
+                try:
+                    audio = MP4(str(file_path))
+                    # Map metadata to MP4 tag names
+                    if audio.tags is None:
+                        audio.tags = {}
+                    
+                    if metadata.get('title') and metadata['title'] != 'Unknown':
+                        audio.tags['©nam'] = [metadata['title']]
+                    if metadata.get('artist') and metadata['artist'] != 'Unknown':
+                        audio.tags['©ART'] = [metadata['artist']]
+                    if metadata.get('album') and metadata['album'] != 'Unknown':
+                        audio.tags['©alb'] = [metadata['album']]
+                    if metadata.get('date') and metadata['date'] != 'Unknown':
+                        audio.tags['©day'] = [metadata['date']]
+                    if metadata.get('genre') and metadata['genre'] != 'Unknown':
+                        audio.tags['©gen'] = [metadata['genre']]
+                    if metadata.get('tracknumber') and metadata['tracknumber'] != '0':
+                        try:
+                            track_num = int(metadata['tracknumber'].split('/')[0])
+                            audio.tags['trkn'] = [(track_num, 0)]
+                        except (ValueError, IndexError):
+                            pass
+                    
+                    audio.save()
+                    self.log(f"Updated: {file_path.name}")
+                    self.fixed_count += 1
+                    return True
+                except Exception as mp4_error:
+                    # Fall back to EasyID3 if MP4 fails
+                    pass
+            
+            # Handle ID3-based formats (MP3, etc.)
             audio = EasyID3(str(file_path))
             for key, value in metadata.items():
                 if value and value != 'Unknown':
