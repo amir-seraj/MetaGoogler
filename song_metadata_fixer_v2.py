@@ -478,10 +478,10 @@ class SongMetadataFixer:
             if width > max_w or height > max_h:
                 issues.append(f"Cover too large ({width}x{height}px, max {max_w}x{max_h}px)")
             
-            # Check aspect ratio (should be square or close)
+            # Check aspect ratio (should be reasonable - allow up to 1.5:1 for some album artwork)
             ratio = max(width, height) / min(width, height)
-            if ratio > 1.1:  # More than 10% deviation from square
-                issues.append(f"Cover not square (ratio {ratio:.2f}:1)")
+            if ratio > 1.5:  # More than 50% deviation from square
+                issues.append(f"Cover extreme aspect ratio (ratio {ratio:.2f}:1)")
             
             return issues
         except Exception as e:
