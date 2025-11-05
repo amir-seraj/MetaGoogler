@@ -487,6 +487,46 @@ class SongMetadataFixer:
         except Exception as e:
             return [f"Invalid image format: {e}"]
     
+    def download_cover_art_from_internet(self, artist: str, title: str) -> Optional[bytes]:
+        """Download cover art from internet for given artist and title.
+        
+        Uses CoverArtFetcher to:
+        1. Fetch candidate images from multiple sources (Spotify, Last.fm, MusicBrainz)
+        2. Cluster by RGB histogram similarity
+        3. Return bytes of image from largest cluster (consensus voting)
+        
+        Args:
+            artist: Artist name
+            title: Track title
+            
+        Returns:
+            Image bytes if successful, None otherwise
+        """
+        try:
+            from cover_art_fetcher import CoverArtFetcher
+        except ImportError:
+            self.logger.warning("CoverArtFetcher not available - cannot download from internet")
+            return None
+        
+        try:
+            fetcher = CoverArtFetcher()
+            
+            # Fetch best candidate from multiple sources with similarity clustering
+            self.logger.debug(f"Fetching cover art for {artist} - {title}")
+            best_candidate = fetcher.fetch_cover_art(artist, title)
+            
+            if best_candidate:
+                self.logger.info(f"✓ Selected best cover for {artist} - {title} "
+                                f"via consensus clustering (similarity: {best_candidate.similarity_score:.1%})")
+                return best_candidate.image_data
+            else:
+                self.logger.warning(f"No cover art found for {artist} - {title}")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"Error downloading cover art: {e}")
+            return None
+    
     def embed_cover_art(self, file_path: Path, cover_path: Path) -> OperationResult:
         """Embed cover art from image file into audio"""
         if not cover_path.exists():
@@ -548,6 +588,100 @@ class SongMetadataFixer:
                         type=3,  # type=3 means front cover
                         desc='Cover',
                         data=image_data
+                    )
+                    audio.tags['APIC'] = apic
+                    audio.save()
+                    embedded = True
+                    self.logger.debug(f"Embedded MP3 cover art: {file_path.name}")
+                except Exception as e:
+                    self.logger.error(f"Failed to embed MP3 cover: {e}")
+                    return OperationResult(False, f"Error embedding MP3 cover: {str(e)}")
+            
+            else:
+                msg = f"Cover art embedding not supported for {file_path.suffix}"
+                self.logger.warning(msg)
+                return OperationResult(False, msg)
+            
+            # Verify embedding was successful
+            if embedded and self.has_cover_art(file_path):
+                self.logger.info(f"✓ Embedded cover art: {file_path.name}")
+                self.cover_fixed += 1
+                return OperationResult(True, f"Embedded cover art: {file_path.name}")
+            else:
+                msg = f"Failed to verify cover art embedding in {file_path.name}"
+                self.logger.error(msg)
+                return OperationResult(False, msg)
+        
+        except Exception as e:
+            self.logger.error(f"Error embedding cover art: {e}")
+            return OperationResult(False, f"Error: {str(e)}")
+    
+    def embed_cover_art_bytes(self, file_path: Path, image_bytes: bytes, mime_type: str = "image/jpeg") -> OperationResult:
+        """Embed cover art from raw bytes into audio file.
+        
+        Args:
+            file_path: Path to audio file
+            image_bytes: Image data as bytes
+            mime_type: MIME type of image (default: image/jpeg)
+            
+        Returns:
+            OperationResult with success status
+        """
+        if not image_bytes:
+            msg = "No image data provided"
+            self.logger.error(msg)
+            return OperationResult(False, msg)
+        
+        try:
+            # Validate image
+            issues = self._validate_image_specs(image_bytes, ".jpg")
+            if issues:
+                msg = f"Cover art issues: {', '.join(issues)}"
+                self.logger.warning(msg)
+                return OperationResult(False, msg)
+            
+            audio = File(str(file_path))
+            if audio is None:
+                msg = f"Cannot read {file_path.name}"
+                self.logger.error(msg)
+                return OperationResult(False, msg)
+            
+            embedded = False
+            
+            # Embed in MP4/M4A
+            if isinstance(audio, MP4):
+                try:
+                    audio.tags['covr'] = [image_bytes]
+                    audio.save()
+                    embedded = True
+                    self.logger.debug(f"Embedded MP4 cover art: {file_path.name}")
+                except Exception as e:
+                    self.logger.error(f"Failed to embed MP4 cover: {e}")
+                    return OperationResult(False, f"Error embedding MP4 cover: {str(e)}")
+            
+            # Embed in FLAC
+            elif isinstance(audio, FLAC):
+                try:
+                    pic = FLAC.Picture()
+                    pic.data = image_bytes
+                    pic.mime = mime_type
+                    audio.add_picture(pic)
+                    audio.save()
+                    embedded = True
+                    self.logger.debug(f"Embedded FLAC cover art: {file_path.name}")
+                except Exception as e:
+                    self.logger.error(f"Failed to embed FLAC cover: {e}")
+                    return OperationResult(False, f"Error embedding FLAC cover: {str(e)}")
+            
+            # Embed in MP3 (ID3)
+            elif hasattr(audio, 'tags') and audio.tags is not None:
+                try:
+                    apic = APIC(
+                        encoding=3,
+                        mime=mime_type,
+                        type=3,  # type=3 means front cover
+                        desc='Cover',
+                        data=image_bytes
                     )
                     audio.tags['APIC'] = apic
                     audio.save()

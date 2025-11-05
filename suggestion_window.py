@@ -139,7 +139,8 @@ class SuggestionWindow(ctk.CTkToplevel):
         row = 0
         
         # Define which fields to display and in what order
-        display_fields = ['artist', 'title', 'album', 'version_info', 'genre', 'moods']
+        # Only show valid ID3 metadata fields, skip AI-only fields like moods/confidence
+        display_fields = ['artist', 'title', 'album', 'genre', 'date', 'tracknumber']
         
         for field in display_fields:
             suggested_value = self.suggested_metadata.get(field, "")
@@ -244,7 +245,7 @@ class SuggestionWindow(ctk.CTkToplevel):
         """
         self.approved_changes = {}
         
-        display_fields = ['artist', 'title', 'album', 'version_info', 'genre', 'moods']
+        display_fields = ['artist', 'title', 'album', 'genre', 'date', 'tracknumber']
         
         for field in display_fields:
             if field in self.checkboxes:

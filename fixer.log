@@ -10,3 +10,67 @@
 2025-11-05 20:08:52,512 - SongMetadataFixer - INFO - SongMetadataFixer initialized
 2025-11-05 20:26:18,093 - SongMetadataFixer - INFO - SongMetadataFixer initialized
 2025-11-05 20:26:18,180 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-05 21:27:06,390 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-05 21:27:06,844 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-05 21:28:18,635 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-05 21:28:18,713 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-05 21:28:26,030 - __main__ - INFO - Found 11 audio files in folder.
+2025-11-05 21:28:26,030 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta/music
+2025-11-05 21:28:35,591 - __main__ - INFO - Validating metadata for all files...
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ 01 - OsamaSon - popstar.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ 01. Tekir - uyudun mu_.m4a: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ 10 - Young Thug - Danny Glover.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ 1_1 - I Love It - Kanye West Lil Pump (320).mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ A.A. Williams - Nights In White Satin.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ Aptune - Mage Mishe (1).mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ CASHIN_AHT_Prod. [2190261591].mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ Future-Colossal.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ Nobody.m4a: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,660 - __main__ - INFO - ✗ Radiohead_-_Backdrifts_Live.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,661 - __main__ - INFO - ✗ audio.m4a: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-05 21:28:35,661 - __main__ - INFO - Validation complete: 0/11 files validated, 0 issues found.
+2025-11-05 21:28:47,552 - __main__ - INFO - Fixing whitespace in metadata...
+2025-11-05 21:28:47,585 - __main__ - INFO - ✗ 01 - OsamaSon - popstar.mp3: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ 01. Tekir - uyudun mu_.m4a: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ 10 - Young Thug - Danny Glover.mp3: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ 1_1 - I Love It - Kanye West Lil Pump (320).mp3: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ A.A. Williams - Nights In White Satin.mp3: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ Aptune - Mage Mishe (1).mp3: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ CASHIN_AHT_Prod. [2190261591].mp3: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ Future-Colossal.mp3: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ Nobody.m4a: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ Radiohead_-_Backdrifts_Live.mp3: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - ✗ audio.m4a: 'SongMetadataFixer' object has no attribute 'fix_metadata'
+2025-11-05 21:28:47,586 - __main__ - INFO - Whitespace fix complete: 0/11 files updated.
+2025-11-05 21:29:00,905 - __main__ - INFO - Getting AI suggestions...
+2025-11-05 21:29:00,922 - __main__ - INFO - Analyzing: A.A. Williams - Nights In White Satin.mp3
+2025-11-05 21:29:15,580 - SongMetadataFixer - ERROR - Error writing metadata to A.A. Williams - Nights In White Satin.mp3: "'moods' is not a valid key"
+2025-11-05 21:29:15,676 - __main__ - INFO - ✗ Failed to apply suggestions: Unknown error
+2025-11-05 21:29:22,164 - __main__ - INFO - Getting AI suggestions...
+2025-11-05 21:29:22,166 - SongMetadataFixer - WARNING - File appears corrupted: Future-Colossal.mp3
+2025-11-05 21:29:22,192 - __main__ - INFO - Could not read metadata: Future-Colossal.mp3
+2025-11-05 21:29:27,474 - __main__ - INFO - Getting AI suggestions...
+2025-11-05 21:29:27,503 - __main__ - INFO - Analyzing: Radiohead_-_Backdrifts_Live.mp3
+2025-11-05 21:29:43,565 - SongMetadataFixer - ERROR - Error writing metadata to Radiohead_-_Backdrifts_Live.mp3: "'version_info' is not a valid key"
+2025-11-05 21:29:43,593 - __main__ - INFO - ✗ Failed to apply suggestions: Unknown error
+2025-11-05 21:31:13,089 - __main__ - INFO - Getting AI suggestions...
+2025-11-05 21:31:13,112 - __main__ - INFO - Analyzing: Aptune - Mage Mishe (1).mp3
+2025-11-05 21:31:25,525 - SongMetadataFixer - ERROR - Error writing metadata to Aptune - Mage Mishe (1).mp3: "'moods' is not a valid key"
+2025-11-05 21:31:25,601 - __main__ - INFO - ✗ Failed to apply suggestions: Unknown error
+2025-11-05 21:32:14,763 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-05 21:32:14,818 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-05 21:32:20,670 - __main__ - INFO - Found 11 audio files in folder.
+2025-11-05 21:32:20,671 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta/music
+2025-11-05 21:32:24,040 - __main__ - INFO - Getting AI suggestions...
+2025-11-05 21:32:24,138 - __main__ - INFO - Analyzing: Radiohead_-_Backdrifts_Live.mp3
+2025-11-05 21:32:30,852 - SongMetadataFixer - INFO - Updated ID3 tags: Radiohead_-_Backdrifts_Live.mp3
+2025-11-05 21:32:30,883 - __main__ - INFO - ✓ Applied AI suggestions to: Radiohead_-_Backdrifts_Live.mp3
+2025-11-05 21:37:10,885 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-05 21:37:10,911 - SongMetadataFixer - INFO - Embedded cover art: 01. Tekir - uyudun mu_.m4a
+2025-11-05 21:37:24,397 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-05 21:37:24,414 - SongMetadataFixer - INFO - Embedded cover art: 1_1 - I Love It - Kanye West Lil Pump (320).mp3
+2025-11-05 21:37:24,424 - SongMetadataFixer - INFO - Embedded cover art: 01 - OsamaSon - popstar.mp3
+2025-11-05 21:37:24,426 - SongMetadataFixer - INFO - Embedded cover art: 01. Tekir - uyudun mu_.m4a
+2025-11-05 21:38:45,081 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-05 21:38:45,096 - SongMetadataFixer - INFO - ✓ Embedded cover art: 01 - OsamaSon - popstar.mp3
+2025-11-05 21:38:45,100 - SongMetadataFixer - INFO - ✓ Embedded cover art: 01. Tekir - uyudun mu_.m4a

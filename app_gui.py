@@ -371,21 +371,95 @@ class MetadataFixerGUI:
             messagebox.showwarning("Warning", "No audio files found.")
             return
         
-        cover_path = filedialog.askopenfilename(
-            title="Select Cover Image",
-            filetypes=[("Image Files", "*.jpg *.jpeg *.png"), ("All Files", "*.*")]
+        # Ask user: internet or local?
+        dialog_result = messagebox.askyesnocancel(
+            "Cover Art Source",
+            "Download cover art from Internet?\n\n"
+            "Yes: Fetch from internet (recommended)\n"
+            "No: Use local image file\n"
+            "Cancel: Cancel operation"
         )
         
-        if not cover_path:
+        if dialog_result is None:
             return
         
-        self._run_threaded_task(
-            lambda prog, log: self._embed_cover_worker(prog, log, cover_path),
-            "Embedding cover art..."
-        )
+        if dialog_result:
+            # Internet source - automatic
+            self._run_threaded_task(
+                lambda prog, log: self._embed_cover_internet_worker(prog, log),
+                "Downloading cover art from internet..."
+            )
+        else:
+            # Local file source
+            cover_path = filedialog.askopenfilename(
+                title="Select Cover Image",
+                filetypes=[("Image Files", "*.jpg *.jpeg *.png"), ("All Files", "*.*")]
+            )
+            
+            if not cover_path:
+                return
+            
+            self._run_threaded_task(
+                lambda prog, log: self._embed_cover_local_worker(prog, log, cover_path),
+                "Embedding cover art from local file..."
+            )
     
-    def _embed_cover_worker(self, progress_callback: Callable, log_callback: Callable, cover_path: str):
-        """Worker thread for embedding cover art."""
+    def _embed_cover_internet_worker(self, progress_callback: Callable, log_callback: Callable):
+        """Worker thread for downloading and embedding cover art from internet."""
+        total = len(self.audio_files)
+        embedded_count = 0
+        skipped_count = 0
+        
+        for idx, file in enumerate(self.audio_files):
+            if not self.is_processing:
+                break
+            
+            try:
+                # Get metadata to find artist and title
+                metadata_result = self.fixer.view_metadata(str(file))
+                if not metadata_result.success:
+                    log_callback(f"→ {file.name}: Could not read metadata")
+                    skipped_count += 1
+                    progress = (idx + 1) / total
+                    progress_callback(progress, f"Processed {idx + 1}/{total}")
+                    continue
+                
+                metadata = metadata_result.data
+                artist = metadata.get('artist', 'Unknown')
+                title = metadata.get('title', file.stem)
+                
+                log_callback(f"⟳ Fetching cover for: {artist} - {title}")
+                
+                # Download cover from internet
+                cover_bytes = self.fixer.download_cover_art_from_internet(artist, title)
+                
+                if not cover_bytes:
+                    log_callback(f"→ {file.name}: No cover found online")
+                    skipped_count += 1
+                    progress = (idx + 1) / total
+                    progress_callback(progress, f"Processed {idx + 1}/{total}")
+                    continue
+                
+                # Embed the downloaded cover
+                result = self.fixer.embed_cover_art_bytes(str(file), cover_bytes)
+                if result.success:
+                    embedded_count += 1
+                    log_callback(f"✓ Cover embedded: {file.name}")
+                else:
+                    log_callback(f"✗ {file.name}: {result.message}")
+                
+                progress = (idx + 1) / total
+                progress_callback(progress, f"Embedded {idx + 1}/{total}")
+                
+            except Exception as e:
+                log_callback(f"✗ {file.name}: {e}")
+        
+        summary = f"Internet cover embedding complete: {embedded_count} embedded, {skipped_count} skipped, {total - embedded_count - skipped_count} errors."
+        log_callback(summary)
+        progress_callback(1.0, summary)
+    
+    def _embed_cover_local_worker(self, progress_callback: Callable, log_callback: Callable, cover_path: str):
+        """Worker thread for embedding cover art from local file."""
         total = len(self.audio_files)
         embedded_count = 0
         
@@ -409,6 +483,7 @@ class MetadataFixerGUI:
         summary = f"Cover art embedding complete: {embedded_count}/{total} files updated."
         log_callback(summary)
         progress_callback(1.0, summary)
+
     
     def _on_view_metadata(self):
         """View metadata for selected file."""
@@ -498,26 +573,57 @@ class MetadataFixerGUI:
                     if window.approved_changes:
                         # Apply approved changes
                         final_metadata = metadata.copy()
-                        final_metadata.update(window.approved_changes)
                         
-                        result = self.fixer.set_metadata(file, final_metadata)
-                        if result and result.success:
-                            log_callback(f"✓ Applied AI suggestions to: {file.name}")
-                        else:
-                            log_callback(f"✗ Failed to apply suggestions: {result.message if result else 'Unknown error'}")
+                        # Filter to only valid ID3 tags supported by mutagen's EasyID3
+                        # Valid ID3 fields: artist, title, album, date, genre, tracknumber, albumartist, etc.
+                        # Invalid (non-standard) fields: moods, confidence, notes, version_info
+                        valid_id3_fields = {
+                            'artist', 'title', 'album', 'date', 'genre', 'tracknumber',
+                            'albumartist', 'composer', 'comment', 'copyright', 'lyricist',
+                            'original_date', 'performer'
+                        }
+                        
+                        filtered_changes = {}
+                        for k, v in window.approved_changes.items():
+                            # Skip non-standard fields
+                            if k not in valid_id3_fields or v is None:
+                                continue
+                            
+                            # Convert lists to comma-separated strings
+                            if isinstance(v, list):
+                                filtered_changes[k] = ', '.join(str(item) for item in v if item)
+                            else:
+                                filtered_changes[k] = str(v)
+                        
+                        final_metadata.update(filtered_changes)
+                        
+                        try:
+                            result = self.fixer.set_metadata(file, final_metadata)
+                            if result and result.success:
+                                log_callback(f"✓ Applied AI suggestions to: {file.name}")
+                            else:
+                                error_msg = result.message if (result and hasattr(result, 'message')) else "Unknown error"
+                                log_callback(f"✗ Failed to apply suggestions: {error_msg}")
+                                logger.error(f"AI metadata write failed: {file.name} - {error_msg}")
+                        except Exception as write_error:
+                            log_callback(f"✗ Error writing metadata: {str(write_error)}")
+                            logger.exception(f"Exception while writing metadata for {file.name}")
                     else:
                         log_callback(f"Suggestions cancelled for: {file.name}")
-                except ImportError:
+                except ImportError as ie:
                     log_callback("Error: Could not import SuggestionWindow")
+                    logger.error(f"ImportError in suggestions window: {ie}")
                 except Exception as e:
-                    log_callback(f"Error applying suggestions: {e}")
+                    log_callback(f"Error applying suggestions: {str(e)}")
+                    logger.exception("Exception in suggestion application")
                 finally:
                     progress_callback(1.0, "Ready")
             
             self.root.after(0, show_suggestions)
             
         except Exception as e:
-            log_callback(f"Error: {e}")
+            log_callback(f"Error: {str(e)}")
+            logger.exception(f"Exception in AI suggestions worker")
             progress_callback(1.0, "Error")
     
     def _run_threaded_task(self, worker_func: Callable, initial_message: str):
