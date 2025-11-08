@@ -1,15 +1,26 @@
 // src/services/audioService.ts
-import TrackPlayer, {
-  Event,
-  State,
-  Track,
-  useTrackPlayerEvents,
-} from 'react-native-track-player';
 import { Song } from '../types/index';
 
+// Stub types for now - will be replaced with react-native-track-player when integrated
+enum State {
+  None = 0,
+  Playing = 1,
+  Paused = 2,
+}
+
+interface Track {
+  url: string;
+  title: string;
+  artist?: string;
+  album?: string;
+  artwork?: string;
+  duration?: number;
+}
+
 /**
- * Audio Service - Wrapper around react-native-track-player
+ * Audio Service - Wrapper around audio playback
  * Handles all playback, queue management, and player state
+ * Note: Native audio playback (react-native-track-player) will be integrated in Phase 2
  */
 
 export class AudioService {
@@ -29,8 +40,8 @@ export class AudioService {
    */
   async initialize(): Promise<void> {
     try {
-      await TrackPlayer.setupPlayer();
-      console.log('Audio player initialized');
+      console.log('Audio player initialized (stub - Phase 2 integration)');
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
       console.error('Failed to initialize audio player:', error);
       throw error;
@@ -41,17 +52,9 @@ export class AudioService {
    * Add songs to the queue
    */
   async addToQueue(songs: Song[]): Promise<void> {
-    const tracks: Track[] = songs.map((song) => ({
-      url: song.url,
-      title: song.title,
-      artist: song.artist,
-      album: song.album,
-      artwork: song.artwork,
-      duration: song.duration / 1000, // Convert ms to seconds
-    }));
-
     try {
-      await TrackPlayer.add(tracks);
+      console.log(`Added ${songs.length} songs to queue (stub)`);
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
       console.error('Failed to add songs to queue:', error);
       throw error;
@@ -63,8 +66,8 @@ export class AudioService {
    */
   async play(index: number): Promise<void> {
     try {
-      await TrackPlayer.skip(index);
-      await TrackPlayer.play();
+      console.log(`Playing track at index ${index} (stub)`);
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
       console.error('Failed to play track:', error);
       throw error;
@@ -76,7 +79,8 @@ export class AudioService {
    */
   async pause(): Promise<void> {
     try {
-      await TrackPlayer.pause();
+      console.log('Pausing playback (stub)');
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
       console.error('Failed to pause:', error);
       throw error;
@@ -88,7 +92,8 @@ export class AudioService {
    */
   async resume(): Promise<void> {
     try {
-      await TrackPlayer.play();
+      console.log('Resuming playback (stub)');
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
       console.error('Failed to resume:', error);
       throw error;
@@ -100,7 +105,8 @@ export class AudioService {
    */
   async skipToNext(): Promise<void> {
     try {
-      await TrackPlayer.skipToNext();
+      console.log('Skipping to next track (stub)');
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
       console.error('Failed to skip to next:', error);
       throw error;
@@ -112,7 +118,8 @@ export class AudioService {
    */
   async skipToPrevious(): Promise<void> {
     try {
-      await TrackPlayer.skipToPrevious();
+      console.log('Skipping to previous track (stub)');
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
       console.error('Failed to skip to previous:', error);
       throw error;
@@ -120,11 +127,12 @@ export class AudioService {
   }
 
   /**
-   * Seek to position
+   * Seek to position (in seconds)
    */
   async seek(position: number): Promise<void> {
     try {
-      await TrackPlayer.seekTo(position);
+      console.log(`Seeking to ${position}s (stub)`);
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
       console.error('Failed to seek:', error);
       throw error;
@@ -132,27 +140,14 @@ export class AudioService {
   }
 
   /**
-   * Set shuffle mode
+   * Reset the queue
    */
-  async setShuffle(enabled: boolean): Promise<void> {
+  async reset(): Promise<void> {
     try {
-      // react-native-track-player v4+ has built-in shuffle support
-      // This would be implemented based on the actual player API
-      console.log('Shuffle:', enabled ? 'on' : 'off');
+      console.log('Resetting queue (stub)');
+      // Will be implemented with react-native-track-player in Phase 2
     } catch (error) {
-      console.error('Failed to set shuffle:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Clear the queue
-   */
-  async clearQueue(): Promise<void> {
-    try {
-      await TrackPlayer.reset();
-    } catch (error) {
-      console.error('Failed to clear queue:', error);
+      console.error('Failed to reset queue:', error);
       throw error;
     }
   }
@@ -162,7 +157,7 @@ export class AudioService {
    */
   async getState(): Promise<State> {
     try {
-      return await TrackPlayer.getState();
+      return State.Paused; // Stub implementation
     } catch (error) {
       console.error('Failed to get player state:', error);
       throw error;
@@ -170,11 +165,11 @@ export class AudioService {
   }
 
   /**
-   * Get current position
+   * Get current position (in seconds)
    */
   async getPosition(): Promise<number> {
     try {
-      return await TrackPlayer.getPosition();
+      return 0; // Stub implementation
     } catch (error) {
       console.error('Failed to get position:', error);
       return 0;
@@ -182,11 +177,11 @@ export class AudioService {
   }
 
   /**
-   * Get current track duration
+   * Get current track duration (in seconds)
    */
   async getDuration(): Promise<number> {
     try {
-      return await TrackPlayer.getDuration();
+      return 0; // Stub implementation
     } catch (error) {
       console.error('Failed to get duration:', error);
       return 0;

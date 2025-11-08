@@ -1,5 +1,5 @@
 import { registerRootComponent } from 'expo';
-import App from './src/App';
+import AppDebug from './src/AppDebug';
 
-// Register the root component
-registerRootComponent(App);
+// Register the root component (using debug version to test basic rendering)
+registerRootComponent(AppDebug);

@@ -105,6 +105,7 @@ These will resolve after first build. Just reload the app with `r`.
 
 ## 💡 Tips
 
+
 - **Keep terminal open** - Shows you live logs and errors
 - **Check console** - Press `j` to open debugger and see logs
 - **Edit code while running** - Save a file and press `r` to reload automatically
