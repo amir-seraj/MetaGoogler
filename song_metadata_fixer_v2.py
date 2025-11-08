@@ -27,6 +27,14 @@ from config_manager import ConfigManager
 from ai_manager import AIManager
 
 try:
+    from song_identifier import SongIdentifier, SongIdentification
+    IDENTIFIER_AVAILABLE = True
+except ImportError:
+    IDENTIFIER_AVAILABLE = False
+    SongIdentifier = None
+    SongIdentification = None
+
+try:
     from mutagen import File
     from mutagen.easyid3 import EasyID3
     from mutagen.id3 import ID3, APIC
@@ -78,6 +86,7 @@ class SongMetadataFixer:
         self.logger = get_logger("SongMetadataFixer")
         self.config = ConfigManager(config_path)
         self.ai_manager = AIManager(config_path)
+        self.identifier = SongIdentifier() if IDENTIFIER_AVAILABLE else None
         self.verbose = verbose
         
         # Statistics
@@ -328,6 +337,123 @@ class SongMetadataFixer:
         except Exception as e:
             self.logger.error(f"Error writing metadata to {file_path.name}: {e}")
             self.error_count += 1
+            return OperationResult(False, f"Error: {str(e)}")
+    
+    def identify_song(self, file_path: Path) -> Optional[Dict]:
+        """
+        Identify song using audio analysis and APIs.
+        
+        Attempts to identify missing metadata by:
+        1. Querying audio fingerprint databases
+        2. Searching Spotify API
+        3. Using ACRCloud (if configured)
+        
+        Args:
+            file_path: Path to audio file
+            
+        Returns:
+            Dictionary with identified metadata (title, artist, album, etc.)
+            Returns None if identification fails
+        """
+        if not IDENTIFIER_AVAILABLE:
+            self.logger.warning("Song identifier not available - install: pip install librosa")
+            return None
+        
+        if not self.identifier:
+            self.logger.warning("Song identifier not initialized")
+            return None
+        
+        try:
+            self.logger.info(f"Attempting to identify: {file_path.name}")
+            
+            # Attempt identification
+            result = self.identifier.identify_song(file_path)
+            
+            if result:
+                # Convert to metadata dict
+                metadata = {
+                    'title': result.title,
+                    'artist': result.artist,
+                    'album': result.album or 'Unknown',
+                    'confidence': result.confidence,
+                    'identification_source': result.source,
+                }
+                
+                if result.isrc:
+                    metadata['isrc'] = result.isrc
+                
+                self.logger.info(f"✓ Identified: {result.artist} - {result.title} "
+                                f"(confidence: {result.confidence:.0%}, source: {result.source})")
+                
+                return metadata
+            else:
+                self.logger.warning(f"Could not identify: {file_path.name}")
+                return None
+        
+        except Exception as e:
+            self.logger.error(f"Error identifying song: {e}")
+            return None
+    
+    def identify_and_fill_metadata(self, file_path: Path, overwrite_existing: bool = False) -> OperationResult:
+        """
+        Identify song and fill in missing metadata fields.
+        
+        Args:
+            file_path: Path to audio file
+            overwrite_existing: If True, overwrite existing metadata with identified data
+            
+        Returns:
+            OperationResult with success status
+        """
+        try:
+            # Get current metadata
+            current = self.get_metadata(file_path)
+            
+            if not current:
+                return OperationResult(False, "Could not read current metadata")
+            
+            # Check if we need identification
+            missing_fields = []
+            for field in ['title', 'artist', 'album']:
+                if not current.get(field) or current[field] == 'Unknown':
+                    missing_fields.append(field)
+            
+            if not missing_fields and not overwrite_existing:
+                self.logger.info(f"All metadata complete for: {file_path.name}")
+                return OperationResult(True, "Metadata complete, no identification needed")
+            
+            # Attempt identification
+            identified = self.identify_song(file_path)
+            
+            if not identified:
+                return OperationResult(False, "Could not identify song")
+            
+            # Merge identified data with existing
+            if overwrite_existing:
+                # Replace all metadata with identified data
+                new_metadata = {
+                    'title': identified['title'],
+                    'artist': identified['artist'],
+                    'album': identified['album'],
+                }
+            else:
+                # Fill only missing fields
+                new_metadata = current.copy()
+                for field in missing_fields:
+                    if field in identified:
+                        new_metadata[field] = identified[field]
+            
+            # Write updated metadata
+            result = self.set_metadata(file_path, new_metadata)
+            
+            if result.success:
+                self.logger.info(f"✓ Filled metadata: {file_path.name}")
+                return OperationResult(True, f"Updated with identified metadata: {identified['title']}")
+            else:
+                return result
+        
+        except Exception as e:
+            self.logger.error(f"Error in identify_and_fill_metadata: {e}")
             return OperationResult(False, f"Error: {str(e)}")
     
     def fix_file(self, file_path: Path) -> OperationResult:

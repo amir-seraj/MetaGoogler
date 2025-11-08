@@ -161,6 +161,7 @@ class MetadataFixerGUI:
         actions = [
             ("Validate Metadata", self._on_validate_all, "light blue"),
             ("Fix Whitespace", self._on_fix_whitespace_all, "light green"),
+            ("Identify Songs", self._on_identify_songs, "#FF6B9D"),  # Pink for identification
             ("Embed Cover Art", self._on_embed_cover_art_all, "light yellow"),
             ("Get AI Suggestions", self._on_ai_suggestions, "#FF9500"),  # Orange for AI
             ("View Metadata", self._on_view_metadata, "light gray"),
@@ -513,6 +514,76 @@ class MetadataFixerGUI:
                 messagebox.showerror("Error", result.message)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to read metadata: {e}")
+    
+    def _on_identify_songs(self):
+        """Identify songs with missing metadata."""
+        if not self.audio_files:
+            messagebox.showwarning("Warning", "No audio files found.")
+            return
+        
+        # Ask if user wants to identify single file or all files
+        selection = self.file_listbox.curselection()
+        
+        if selection:
+            response = messagebox.askyesno(
+                "Identify Songs",
+                "Identify:\n"
+                "Yes - Selected file only\n"
+                "No - All files in folder"
+            )
+            
+            if response:
+                # Single file
+                file = self.audio_files[selection[0]]
+                self._run_threaded_task(
+                    lambda prog, log: self._identify_worker(prog, log, [file]),
+                    "Identifying song..."
+                )
+            else:
+                # All files
+                self._run_threaded_task(
+                    lambda prog, log: self._identify_worker(prog, log, self.audio_files),
+                    "Identifying songs..."
+                )
+        else:
+            # All files
+            self._run_threaded_task(
+                lambda prog, log: self._identify_worker(prog, log, self.audio_files),
+                "Identifying songs..."
+            )
+    
+    def _identify_worker(self, progress_callback: Callable, log_callback: Callable, files: list):
+        """Worker thread for song identification."""
+        total = len(files)
+        identified_count = 0
+        filled_count = 0
+        
+        for idx, file in enumerate(files):
+            if not self.is_processing:
+                break
+            
+            try:
+                log_callback(f"⟳ Analyzing: {file.name}")
+                
+                # Attempt identification and metadata filling
+                result = self.fixer.identify_and_fill_metadata(str(file), overwrite_existing=False)
+                
+                if result.success:
+                    filled_count += 1
+                    identified_count += 1
+                    log_callback(f"✓ Identified & filled: {file.name}")
+                else:
+                    log_callback(f"→ {file.name}: {result.message}")
+                
+                progress = (idx + 1) / total
+                progress_callback(progress, f"Processed {idx + 1}/{total}")
+            
+            except Exception as e:
+                log_callback(f"✗ {file.name}: {e}")
+        
+        summary = f"Identification complete: {filled_count} filled, {total - filled_count} unchanged."
+        log_callback(summary)
+        progress_callback(1.0, summary)
     
     def _on_ai_suggestions(self):
         """Get AI suggestions for selected file."""
