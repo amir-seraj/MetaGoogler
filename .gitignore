@@ -83,3 +83,16 @@ metadatafixer-gui.exe
 # Ignore generated distributions (but keep source)
 Song_Metadata_Fixer_v1.0.tar.gz
 Song_Metadata_Fixer_v1.0.zip
+
+# Audio files and media
+*.mp3
+*.m4a
+*.flac
+*.wav
+*.aac
+music/
+
+# Node modules (for mobile app)
+node_modules/
+mobile_app/node_modules/
+
