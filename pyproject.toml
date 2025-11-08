@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meta-googler"
+version = "1.0.0"
+description = "Song metadata management system with AI-powered suggestions and intelligent cover art integration"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Amir Seraj", email = "amir@example.com"}
+]
+
+keywords = ["music", "metadata", "audio", "identification", "ai", "gui"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: X11 Applications",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Sound/Audio :: CD Audio",
+]
+
+dependencies = [
+    "mutagen>=1.46.0",
+    "librosa>=0.10.0",
+    "numpy>=1.24.3",
+    "scipy>=1.11.2",
+    "customtkinter>=5.2.0",
+    "requests>=2.31.0",
+    "urllib3>=2.0.4",
+    "litellm>=1.0.1",
+    "python-dotenv>=1.0.0",
+    "audioread>=3.1.1",
+    "soundfile>=0.12.1",
+    "Pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "flake8>=6.0",
+    "mypy>=1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/amir-seraj/MetaGoogler"
+Documentation = "https://github.com/amir-seraj/MetaGoogler/tree/main/docs"
+Repository = "https://github.com/amir-seraj/MetaGoogler.git"
+"Bug Tracker" = "https://github.com/amir-seraj/MetaGoogler/issues"
+
+[project.scripts]
+meta-googler = "src.main:main"
+
+[tool.setuptools]
+packages = ["src", "src.utils"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip_glob = ["*/migrations/*"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false

@@ -1,175 +1,205 @@
-# Song Metadata Fixer
+# 🎵 Meta-Googler
 
-A powerful command-line tool to fix, validate, and organize song metadata (ID3 tags) for audio files. **Perfect for audiophiles managing music across multiple devices** (DAP, phone, car stereo, desktop players, etc.).
+**Song Metadata Management System with AI-Powered Suggestions & Intelligent Cover Art Integration**
 
-## Features
+A comprehensive desktop application for managing music metadata, identifying songs using AI fingerprinting, and intelligently fetching cover artwork. Built with Python, featuring a modern GUI and multi-model LLM support.
 
-- **🔧 Fix Metadata**: Clean and standardize metadata for single files or entire directories
-- **✓ Validate Quality**: Check metadata completeness before syncing to devices
-- **📁 Organize Library**: Auto-organize files into Artist/Album folder structure
-- **👀 View Metadata**: Display current metadata with validation status
-- **🔄 Batch Processing**: Fix multiple files at once
-- **🌳 Recursive Support**: Process subdirectories automatically
-- **🎵 Multiple Formats**: Support for MP3, M4A, FLAC, OGG, and WMA files
-- **📊 Detailed Reporting**: Save validation reports as JSON
+## ✨ Features
 
-## The Audiophile Workflow
+### Core Capabilities
+- 🎼 **Song Identification**: Automatically identify songs using audio fingerprinting (AudD API)
+- 📝 **Metadata Management**: Edit and organize music tags (title, artist, album, genre, date, etc.)
+- 🤖 **AI Suggestions**: Get intelligent metadata suggestions powered by LLMs (Ollama, GPT-4, Claude, etc.)
+- 🖼️ **Cover Art**: Intelligent cover art fetching and embedding from multiple sources
+- 📦 **Batch Processing**: Process multiple files at once
+- 🎛️ **Modern GUI**: CustomTkinter-based interface with metadata sidebar and real-time editing
 
-```
-Downloaded Music
-    ↓
-[Fix] - Clean metadata and formatting
-    ↓
-[Validate] - Check quality before sync
-    ↓
-[Organize] - Sort into Artist/Album structure
-    ↓
-Sync to: DAP | Phone | Car Stereo | Desktop Player
-```
+### Advanced Features
+- **Multi-Model LLM Support**: Switch between 13+ LLM providers (Phase 1 complete)
+- **Middle-of-Song Audio Sampling**: Optimized audio extraction for better identification accuracy
+- **Auto-Rename**: Automatically rename files to "Artist - Title" format on save
+- **Metadata Validation**: Comprehensive validation with issue reporting
+- **Free APIs**: Uses free and affordable APIs (no expensive premium services required)
 
-## Installation
+## 🚀 Quick Start
 
-### Prerequisites
-- Python 3.7 or higher
-- pip package manager
+### Installation
 
-### Setup
-
-1. Clone or download this project
-2. Install dependencies:
 ```bash
-pip install -r requirements.txt
+# Clone repository
+git clone https://github.com/amir-seraj/MetaGoogler.git
+cd MetaGoogler
+
+# Install with dependencies
+make install
+
+# Or manually:
+pip install -e .
 ```
 
-## Usage
+### Running the Application
 
-### 1. Fix Metadata for Downloaded Music
-Fix all metadata issues in your downloads folder:
 ```bash
-# Single file
-python song_metadata_fixer.py fix song.mp3
+# Option 1: Using make
+make run
 
-# All songs in directory
-python song_metadata_fixer.py fix ./downloads
+# Option 2: Direct Python
+python -m src.main
 
-# Recursively fix all songs in subdirectories
-python song_metadata_fixer.py fix ./downloads -r
-
-# Verbose mode for detailed logging
-python song_metadata_fixer.py fix ./downloads -r -v
+# Option 3: After package installation
+meta-googler
 ```
 
-### 2. Validate Metadata Quality
-Before syncing to your device, validate that all metadata is complete:
+## 📋 Requirements
+
+- Python 3.8+
+- Dependencies listed in `requirements.txt`
+
+For complete setup with all features:
+- [Ollama](https://ollama.ai) (for local LLM - free and optional)
+- Audio processing libraries (librosa, mutagen)
+
+## 📚 Documentation
+
+Complete documentation available in the `docs/` directory:
+
+| Document | Purpose |
+|----------|---------|
+| [`docs/README.md`](docs/README.md) | Project overview |
+| [`docs/MCP_LITELLM_GUIDE.md`](docs/MCP_LITELLM_GUIDE.md) | In-depth LiteLLM + MCP migration guide (Phases 1-3) |
+| [`docs/MCP_LITELLM_QUICK_REF.md`](docs/MCP_LITELLM_QUICK_REF.md) | Quick reference for LiteLLM setup |
+| [`docs/PHASE1_COMPLETE.md`](docs/PHASE1_COMPLETE.md) | Phase 1 completion summary |
+| [`docs/SONG_IDENTIFICATION_GUIDE.md`](docs/SONG_IDENTIFICATION_GUIDE.md) | Song identification system details |
+| [`docs/AI_FEATURE_GUIDE.md`](docs/AI_FEATURE_GUIDE.md) | AI features documentation |
+| [`docs/COVER_ART_GUIDE.md`](docs/COVER_ART_GUIDE.md) | Cover art features guide |
+| [`docs/SETUP_ACRCLOUD.md`](docs/SETUP_ACRCLOUD.md) | ACRCloud API setup |
+
+## 🏗️ Project Structure
+
+```
+meta-googler/
+├── src/                          # Main application code
+│   ├── __init__.py
+│   ├── main.py                   # Entry point
+│   ├── app_gui.py                # GUI application
+│   ├── song_identifier.py        # Song identification
+│   ├── song_metadata_fixer_v2.py # Metadata management
+│   ├── batch_process.py          # Batch processing
+│   ├── ai_manager_v2.py          # LiteLLM AI manager
+│   └── utils/                    # Supporting modules
+│       ├── __init__.py
+│       ├── cover_art_fetcher.py  # Cover art management
+│       ├── suggestion_window.py  # UI suggestions
+│       ├── config_manager.py     # Configuration
+│       └── logger_setup.py       # Logging
+├── docs/                         # Documentation
+│   ├── MCP_LITELLM_GUIDE.md     # Complete upgrade guide
+│   ├── PHASE1_COMPLETE.md       # Phase 1 summary
+│   ├── SONG_IDENTIFICATION_GUIDE.md
+│   ├── AI_FEATURE_GUIDE.md
+│   └── ...
+├── config/                       # Configuration files
+├── tests/                        # Test suite
+├── pyproject.toml               # Project configuration
+├── setup.py                     # Setup script
+├── requirements.txt             # Dependencies
+├── Makefile                     # Development commands
+└── README.md                    # This file
+```
+
+## 🛠️ Development
+
+### Install Development Dependencies
+
 ```bash
-# Quick validation
-python song_metadata_fixer.py validate ./music
-
-# Save detailed report
-python song_metadata_fixer.py validate ./music --report
+make dev-install
 ```
 
-**Validation checks for:**
-- ✓ Title, Artist, Album present
-- ✓ Genre tagged
-- ✓ Year/Date filled
-- ✓ Proper formatting
+### Running Tests
 
-### 3. Organize Music Library
-Auto-organize files into a clean Artist/Album structure for easy navigation:
 ```bash
-python song_metadata_fixer.py organize ./downloads -o ~/Music/Organized
+make test
 ```
 
-**Results in structure:**
-```
-Organized/
-├── Artist Name/
-│   ├── Album 1/
-│   │   ├── Track 1.mp3
-│   │   ├── Track 2.mp3
-│   │   └── Track 3.mp3
-│   └── Album 2/
-│       └── Track 1.mp3
-└── Another Artist/
-    └── Album/
-        └── Track.mp3
-```
+### Code Quality
 
-### 4. View Metadata Details
-Display current metadata with validation status:
 ```bash
-python song_metadata_fixer.py view song.mp3
+# Lint code
+make lint
+
+# Format code
+make format
 ```
 
-Output shows:
-- Title, Artist, Album
-- Genre, Date, Track Number
-- ✓ Validation status with issues found
+### Build Documentation
 
-## Supported Audio Formats
-- MP3 (.mp3)
-- M4A (.m4a)
-- FLAC (.flac)
-- OGG Vorbis (.ogg)
-- WMA (.wma)
-
-## What Gets Fixed
-
-The tool standardizes:
-- Extra whitespace in metadata fields
-- ID3 tag consistency
-- Formatting across all files
-- File organization by metadata
-
-## Use Cases
-
-### For DAP (Digital Audio Player) Users
 ```bash
-# Before syncing to Astell&Kern, Sony Walkman, etc.
-python song_metadata_fixer.py fix ~/downloads -r
-python song_metadata_fixer.py validate ~/downloads --report
+make docs
 ```
 
-### For Car Stereo Compatibility
+## 🎯 Current Status
+
+### Phase 1: ✅ Complete
+- Song identification system (AudD API)
+- GUI with metadata sidebar and auto-rename
+- LiteLLM multi-model AI support (13+ providers)
+- Audio sampling optimization (middle-of-song)
+- All tests passing
+
+### Phase 2: 📋 Ready (Not Yet Implemented)
+- MCP server for Spotify (real metadata + audio features)
+- MCP server for MusicBrainz (comprehensive database)
+- LLM tool-use integration for enhanced suggestions
+
+### Phase 3: 🎯 Future
+- Advanced MCP + LLM integration
+- Real-time metadata enrichment
+- Automated playlist generation
+
+## 🔧 Configuration
+
+### Environment Variables
+
 ```bash
-# Ensure all metadata is properly formatted
-python song_metadata_fixer.py fix ~/music -r -v
+# LLM Configuration
+LLM_MODEL=ollama/mistral          # Default model
+OLLAMA_BASE_URL=http://localhost:11434
+
+# Cloud LLM APIs (optional)
+OPENAI_API_KEY=sk-...            # For GPT-4
+ANTHROPIC_API_KEY=sk-ant-...     # For Claude
+GOOGLE_API_KEY=...               # For Gemini
+
+# Music APIs
+AUDD_API_TOKEN=...               # For song identification
+ACRCLOUD_ACCESS_KEY=...          # Alternative identification API
 ```
 
-### For Phone Syncing
-```bash
-# Organize and validate before transfer
-python song_metadata_fixer.py organize ~/downloads -o ~/Music/ToSync
-python song_metadata_fixer.py validate ~/Music/ToSync
-```
+### Configuration Files
 
-## Device-Specific Tips
+See `config/` directory for template configuration files.
 
-| Device | Best Practice |
-|--------|---------------|
-| **DAP** | Fix → Validate → Check album art → Organize |
-| **Phone** | Fix → Organize → Sync via iTunes/MTP |
-| **Car Stereo** | Validate all required fields filled |
-| **Desktop** | Use for library management & tagging |
+## 📝 License
 
-## Future Enhancements
+MIT License - See LICENSE file for details
 
-- 🎨 Album art extraction and embedding
-- 🔍 Automatic metadata fetching from online databases (MusicBrainz, Discogs)
-- 🏷️ Custom tagging rules and templates
-- 📊 Advanced metadata comparison and deduplication
-- 🔗 Playlist generation from metadata
-- ⚙️ Device-specific metadata profiles
+## 🤝 Contributing
 
-## Dependencies
+Contributions welcome! Please feel free to:
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-- **mutagen**: Python library for reading and writing audio metadata
+## 📧 Contact
 
-## License
+**Author**: Amir Seraj
 
-MIT
+For questions or issues, please open an issue on GitHub.
 
-## Contributing
+---
 
-Feel free to fork this project and submit pull requests!
+**Last Updated**: November 8, 2025  
+**Current Version**: 1.0.0  
+**Status**: Beta - Fully functional, ready for production use

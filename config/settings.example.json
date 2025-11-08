@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "Meta-Googler",
+    "version": "1.0.0",
+    "theme": "dark",
+    "window": {
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "music": {
+    "default_folder": "~/Music",
+    "supported_formats": ["mp3", "flac", "wav", "m4a", "aac", "ogg"],
+    "auto_rename_format": "{artist} - {title}"
+  },
+  "identification": {
+    "enabled": true,
+    "api": "audd",
+    "sample_position": "middle",
+    "sample_size_mb": 1.5
+  },
+  "ai": {
+    "provider": "ollama",
+    "model": "mistral",
+    "temperature": 0.7
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/meta-googler.log"
+  }
+}

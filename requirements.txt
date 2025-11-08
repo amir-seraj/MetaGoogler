@@ -1,1 +1,23 @@
-mutagen>=1.46.0
+# Core Dependencies
+mutagen==1.46.0
+librosa==0.10.0
+numpy==1.24.3
+scipy==1.11.2
+
+# GUI
+customtkinter==5.2.0
+
+# API & Web
+requests==2.31.0
+urllib3==2.0.4
+
+# LLM & AI (Phase 1)
+litellm==1.0.1
+python-dotenv==1.0.0
+
+# Audio Processing
+audioread==3.1.1
+soundfile==0.12.1
+
+# Utilities
+Pillow==10.0.0
