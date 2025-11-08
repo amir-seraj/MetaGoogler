@@ -198,6 +198,26 @@ class SongMetadataFixer:
             self.error_count += 1
             return None
 
+    def view_metadata(self, file_path: Path) -> OperationResult:
+        """
+        Wrapper around get_metadata that returns an OperationResult for GUI use.
+        Includes a basic validation report (number of issues) in the data field.
+        """
+        try:
+            metadata = self.get_metadata(Path(file_path))
+            if metadata is None:
+                return OperationResult(False, f"Could not read metadata from {Path(file_path).name}")
+
+            # Validate metadata and collect issues
+            is_valid, issues = self.validate_metadata(metadata, filename=Path(file_path).name)
+            data = metadata.copy()
+            data['issues'] = len(issues)
+            data['issues_list'] = issues
+            return OperationResult(True, "Metadata retrieved", data)
+        except Exception as e:
+            self.logger.error(f"Error in view_metadata: {e}")
+            return OperationResult(False, str(e))
+
     
     def validate_metadata(self, metadata: dict, filename: str = "") -> Tuple[bool, List[str]]:
         """

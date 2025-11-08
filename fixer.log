@@ -325,3 +325,179 @@
 2025-11-08 13:14:07,890 - SongMetadataFixer - INFO - ✓ Identified: A.A. Williams - Nights In White Satin (confidence: 50%, source: audd)
 2025-11-08 13:14:07,891 - SongMetadataFixer - INFO - Updated ID3 tags: test_satin.mp3
 2025-11-08 13:14:07,891 - SongMetadataFixer - INFO - ✓ Filled metadata: test_satin.mp3
+2025-11-08 13:15:21,750 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 13:15:21,874 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-08 13:15:25,925 - __main__ - INFO - Found 12 audio files in folder.
+2025-11-08 13:15:25,925 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta/music
+2025-11-08 13:15:47,141 - __main__ - INFO - Found 12 audio files in folder.
+2025-11-08 13:15:47,141 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta/music
+2025-11-08 13:15:52,441 - __main__ - INFO - Identifying song...
+2025-11-08 13:15:52,446 - SongMetadataFixer - INFO - All metadata complete for: 3.mp3
+2025-11-08 13:15:52,457 - __main__ - INFO - ⟳ Analyzing: 3.mp3
+2025-11-08 13:15:52,457 - __main__ - INFO - ✓ Identified & filled: 3.mp3
+2025-11-08 13:15:52,458 - __main__ - INFO - Identification complete: 1 filled, 0 unchanged.
+2025-11-08 13:16:18,099 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 13:17:03,142 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 13:17:03,248 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-08 13:17:05,759 - __main__ - INFO - Found 1 audio files in folder.
+2025-11-08 13:17:05,760 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta
+2025-11-08 13:17:09,801 - __main__ - INFO - Found 1 audio files in folder.
+2025-11-08 13:17:09,801 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta
+2025-11-08 13:17:14,687 - __main__ - INFO - Found 13 audio files in folder.
+2025-11-08 13:17:14,687 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta/music
+2025-11-08 13:17:21,418 - __main__ - INFO - Identifying song...
+2025-11-08 13:17:21,422 - SongMetadataFixer - INFO - Attempting to identify: test_empty_metadata.mp3
+2025-11-08 13:17:21,500 - __main__ - INFO - ⟳ Analyzing: test_empty_metadata.mp3
+2025-11-08 13:17:25,464 - SongMetadataFixer - INFO - ✓ Identified: Kanye West - I Love It (& Lil Pump) (confidence: 50%, source: audd)
+2025-11-08 13:17:25,468 - SongMetadataFixer - INFO - Updated ID3 tags: test_empty_metadata.mp3
+2025-11-08 13:17:25,468 - SongMetadataFixer - INFO - ✓ Filled metadata: test_empty_metadata.mp3
+2025-11-08 13:17:25,512 - __main__ - INFO - ✓ Identified & filled: test_empty_metadata.mp3
+2025-11-08 13:17:25,513 - __main__ - INFO - Identification complete: 1 filled, 0 unchanged.
+2025-11-08 13:19:39,755 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 13:19:57,270 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 13:23:31,817 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 13:25:24,820 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 13:25:24,922 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-08 13:25:59,778 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 13:25:59,886 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-08 13:26:05,320 - __main__ - INFO - Found 13 audio files in folder.
+2025-11-08 13:26:05,320 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta/music
+2025-11-08 13:26:16,071 - __main__ - INFO - Identifying songs...
+2025-11-08 13:26:16,073 - SongMetadataFixer - INFO - All metadata complete for: 01 - OsamaSon - popstar.mp3
+2025-11-08 13:26:16,074 - SongMetadataFixer - INFO - All metadata complete for: 01. Tekir - uyudun mu_.m4a
+2025-11-08 13:26:16,077 - SongMetadataFixer - INFO - All metadata complete for: 10 - Young Thug - Danny Glover.mp3
+2025-11-08 13:26:16,081 - SongMetadataFixer - INFO - All metadata complete for: 3.mp3
+2025-11-08 13:26:16,082 - SongMetadataFixer - INFO - All metadata complete for: A.A. Williams - Nights In White Satin.mp3
+2025-11-08 13:26:16,082 - SongMetadataFixer - INFO - All metadata complete for: Aptune - Mage Mishe (1).mp3
+2025-11-08 13:26:16,082 - SongMetadataFixer - INFO - Attempting to identify: CASHIN_AHT_Prod. [2190261591].mp3
+2025-11-08 13:26:16,125 - __main__ - INFO - ⟳ Analyzing: 01 - OsamaSon - popstar.mp3
+2025-11-08 13:26:16,126 - __main__ - INFO - ✓ Identified & filled: 01 - OsamaSon - popstar.mp3
+2025-11-08 13:26:16,126 - __main__ - INFO - ⟳ Analyzing: 01. Tekir - uyudun mu_.m4a
+2025-11-08 13:26:16,126 - __main__ - INFO - ✓ Identified & filled: 01. Tekir - uyudun mu_.m4a
+2025-11-08 13:26:16,126 - __main__ - INFO - ⟳ Analyzing: 10 - Young Thug - Danny Glover.mp3
+2025-11-08 13:26:16,126 - __main__ - INFO - ✓ Identified & filled: 10 - Young Thug - Danny Glover.mp3
+2025-11-08 13:26:16,127 - __main__ - INFO - ⟳ Analyzing: 3.mp3
+2025-11-08 13:26:16,127 - __main__ - INFO - ✓ Identified & filled: 3.mp3
+2025-11-08 13:26:16,127 - __main__ - INFO - ⟳ Analyzing: A.A. Williams - Nights In White Satin.mp3
+2025-11-08 13:26:16,127 - __main__ - INFO - ✓ Identified & filled: A.A. Williams - Nights In White Satin.mp3
+2025-11-08 13:26:16,127 - __main__ - INFO - ⟳ Analyzing: Aptune - Mage Mishe (1).mp3
+2025-11-08 13:26:16,127 - __main__ - INFO - ✓ Identified & filled: Aptune - Mage Mishe (1).mp3
+2025-11-08 13:26:16,128 - __main__ - INFO - ⟳ Analyzing: CASHIN_AHT_Prod. [2190261591].mp3
+2025-11-08 13:26:26,615 - SongMetadataFixer - WARNING - File appears corrupted: Future-Colossal.mp3
+2025-11-08 13:26:27,891 - SongMetadataFixer - WARNING - Could not identify: CASHIN_AHT_Prod. [2190261591].mp3
+2025-11-08 13:26:27,892 - SongMetadataFixer - WARNING - File appears corrupted: Future-Colossal.mp3
+2025-11-08 13:26:27,892 - SongMetadataFixer - INFO - All metadata complete for: Nobody.m4a
+2025-11-08 13:26:27,893 - SongMetadataFixer - INFO - Attempting to identify: Radiohead_-_Backdrifts_Live.mp3
+2025-11-08 13:26:27,924 - __main__ - INFO - → CASHIN_AHT_Prod. [2190261591].mp3: Could not identify song
+2025-11-08 13:26:27,925 - __main__ - INFO - ⟳ Analyzing: Future-Colossal.mp3
+2025-11-08 13:26:27,925 - __main__ - INFO - → Future-Colossal.mp3: Could not read current metadata
+2025-11-08 13:26:27,925 - __main__ - INFO - ⟳ Analyzing: Nobody.m4a
+2025-11-08 13:26:27,925 - __main__ - INFO - ✓ Identified & filled: Nobody.m4a
+2025-11-08 13:26:27,925 - __main__ - INFO - ⟳ Analyzing: Radiohead_-_Backdrifts_Live.mp3
+2025-11-08 13:26:38,335 - SongMetadataFixer - WARNING - Could not identify: Radiohead_-_Backdrifts_Live.mp3
+2025-11-08 13:26:38,335 - SongMetadataFixer - INFO - All metadata complete for: audio.m4a
+2025-11-08 13:26:38,349 - SongMetadataFixer - INFO - All metadata complete for: test_empty_metadata.mp3
+2025-11-08 13:26:38,350 - SongMetadataFixer - INFO - Attempting to identify: test_no_metadata.mp3
+2025-11-08 13:26:38,370 - SongMetadataFixer - WARNING - File appears corrupted: Future-Colossal.mp3
+2025-11-08 13:26:38,377 - __main__ - INFO - → Radiohead_-_Backdrifts_Live.mp3: Could not identify song
+2025-11-08 13:26:38,377 - __main__ - INFO - ⟳ Analyzing: audio.m4a
+2025-11-08 13:26:38,377 - __main__ - INFO - ✓ Identified & filled: audio.m4a
+2025-11-08 13:26:38,377 - __main__ - INFO - ⟳ Analyzing: test_empty_metadata.mp3
+2025-11-08 13:26:38,377 - __main__ - INFO - ✓ Identified & filled: test_empty_metadata.mp3
+2025-11-08 13:26:38,378 - __main__ - INFO - ⟳ Analyzing: test_no_metadata.mp3
+2025-11-08 13:26:43,642 - SongMetadataFixer - WARNING - File appears corrupted: Future-Colossal.mp3
+2025-11-08 13:26:46,656 - SongMetadataFixer - WARNING - File appears corrupted: Future-Colossal.mp3
+2025-11-08 13:26:47,354 - SongMetadataFixer - WARNING - File appears corrupted: Future-Colossal.mp3
+2025-11-08 13:26:48,762 - SongMetadataFixer - WARNING - Could not identify: test_no_metadata.mp3
+2025-11-08 13:26:48,832 - __main__ - INFO - → test_no_metadata.mp3: Could not identify song
+2025-11-08 13:26:48,832 - __main__ - INFO - Identification complete: 9 filled, 4 unchanged.
+2025-11-08 13:26:53,494 - __main__ - INFO - Getting AI suggestions...
+2025-11-08 13:26:53,545 - __main__ - INFO - Analyzing: 3.mp3
+2025-11-08 13:27:03,489 - __main__ - INFO - Suggestions cancelled for: 3.mp3
+2025-11-08 13:27:05,826 - __main__ - INFO - Getting AI suggestions...
+2025-11-08 13:27:05,897 - __main__ - INFO - Analyzing: 3.mp3
+2025-11-08 13:27:12,237 - __main__ - INFO - Suggestions cancelled for: 3.mp3
+2025-11-08 13:27:21,260 - __main__ - INFO - Validating metadata for all files...
+2025-11-08 14:49:51,411 - SongMetadataFixer - INFO - Updated ID3 tags: 3.mp3
+2025-11-08 14:49:51,411 - __main__ - INFO - ✓ Metadata saved: 3.mp3
+2025-11-08 14:49:51,412 - __main__ - INFO - 📝 Renamed: Kanye West & Lil Pump - I Love It.mp3
+2025-11-08 14:49:51,412 - __main__ - INFO - Found 13 audio files in folder.
+2025-11-08 14:49:51,436 - __main__ - INFO - ✗ 01 - OsamaSon - popstar.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,436 - __main__ - INFO - ✗ 01. Tekir - uyudun mu_.m4a: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ 10 - Young Thug - Danny Glover.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ A.A. Williams - Nights In White Satin.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ Aptune - Mage Mishe (1).mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ CASHIN_AHT_Prod. [2190261591].mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ Future-Colossal.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ Kanye West & Lil Pump - I Love It.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ Nobody.m4a: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ Radiohead_-_Backdrifts_Live.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ audio.m4a: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ test_empty_metadata.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - ✗ test_no_metadata.mp3: 'SongMetadataFixer' object has no attribute 'view_metadata'
+2025-11-08 14:49:51,437 - __main__ - INFO - Validation complete: 0/13 files validated, 0 issues found.
+2025-11-08 14:52:27,881 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 14:53:24,164 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 14:53:24,337 - __main__ - INFO - Application started. Select a music folder to begin.
+2025-11-08 14:53:31,941 - __main__ - INFO - Found 13 audio files in folder.
+2025-11-08 14:53:31,941 - __main__ - INFO - Loaded folder: /home/amir/Documents/Meta/music
+2025-11-08 14:53:46,465 - SongMetadataFixer - INFO - Updated MP4 tags: Nobody.m4a
+2025-11-08 14:53:46,465 - __main__ - INFO - ✓ Metadata saved: Nobody.m4a
+2025-11-08 14:53:46,465 - __main__ - INFO - 📝 Renamed: fakemink, Fakemink, Mag - Nobody.m4a
+2025-11-08 14:53:46,466 - __main__ - INFO - Found 13 audio files in folder.
+2025-11-08 14:54:08,518 - __main__ - INFO - Identifying songs...
+2025-11-08 14:54:08,521 - SongMetadataFixer - INFO - All metadata complete for: 01 - OsamaSon - popstar.mp3
+2025-11-08 14:54:08,521 - SongMetadataFixer - INFO - All metadata complete for: 01. Tekir - uyudun mu_.m4a
+2025-11-08 14:54:08,524 - SongMetadataFixer - INFO - All metadata complete for: 10 - Young Thug - Danny Glover.mp3
+2025-11-08 14:54:08,525 - SongMetadataFixer - INFO - All metadata complete for: A.A. Williams - Nights In White Satin.mp3
+2025-11-08 14:54:08,525 - SongMetadataFixer - INFO - All metadata complete for: Aptune - Mage Mishe (1).mp3
+2025-11-08 14:54:08,526 - SongMetadataFixer - INFO - Attempting to identify: CASHIN_AHT_Prod. [2190261591].mp3
+2025-11-08 14:54:08,561 - __main__ - INFO - ⟳ Analyzing: 01 - OsamaSon - popstar.mp3
+2025-11-08 14:54:08,561 - __main__ - INFO - ✓ Identified & filled: 01 - OsamaSon - popstar.mp3
+2025-11-08 14:54:08,561 - __main__ - INFO - ⟳ Analyzing: 01. Tekir - uyudun mu_.m4a
+2025-11-08 14:54:08,562 - __main__ - INFO - ✓ Identified & filled: 01. Tekir - uyudun mu_.m4a
+2025-11-08 14:54:08,562 - __main__ - INFO - ⟳ Analyzing: 10 - Young Thug - Danny Glover.mp3
+2025-11-08 14:54:08,562 - __main__ - INFO - ✓ Identified & filled: 10 - Young Thug - Danny Glover.mp3
+2025-11-08 14:54:08,562 - __main__ - INFO - ⟳ Analyzing: A.A. Williams - Nights In White Satin.mp3
+2025-11-08 14:54:08,562 - __main__ - INFO - ✓ Identified & filled: A.A. Williams - Nights In White Satin.mp3
+2025-11-08 14:54:08,562 - __main__ - INFO - ⟳ Analyzing: Aptune - Mage Mishe (1).mp3
+2025-11-08 14:54:08,563 - __main__ - INFO - ✓ Identified & filled: Aptune - Mage Mishe (1).mp3
+2025-11-08 14:54:08,563 - __main__ - INFO - ⟳ Analyzing: CASHIN_AHT_Prod. [2190261591].mp3
+2025-11-08 14:54:13,160 - SongMetadataFixer - WARNING - Could not identify: CASHIN_AHT_Prod. [2190261591].mp3
+2025-11-08 14:54:13,160 - SongMetadataFixer - WARNING - File appears corrupted: Future-Colossal.mp3
+2025-11-08 14:54:13,164 - SongMetadataFixer - INFO - All metadata complete for: Kanye West & Lil Pump - I Love It.mp3
+2025-11-08 14:54:13,165 - SongMetadataFixer - INFO - Attempting to identify: Radiohead_-_Backdrifts_Live.mp3
+2025-11-08 14:54:13,204 - __main__ - INFO - → CASHIN_AHT_Prod. [2190261591].mp3: Could not identify song
+2025-11-08 14:54:13,204 - __main__ - INFO - ⟳ Analyzing: Future-Colossal.mp3
+2025-11-08 14:54:13,204 - __main__ - INFO - → Future-Colossal.mp3: Could not read current metadata
+2025-11-08 14:54:13,205 - __main__ - INFO - ⟳ Analyzing: Kanye West & Lil Pump - I Love It.mp3
+2025-11-08 14:54:13,205 - __main__ - INFO - ✓ Identified & filled: Kanye West & Lil Pump - I Love It.mp3
+2025-11-08 14:54:13,205 - __main__ - INFO - ⟳ Analyzing: Radiohead_-_Backdrifts_Live.mp3
+2025-11-08 14:54:17,378 - SongMetadataFixer - WARNING - Could not identify: Radiohead_-_Backdrifts_Live.mp3
+2025-11-08 14:54:17,378 - SongMetadataFixer - INFO - All metadata complete for: audio.m4a
+2025-11-08 14:54:17,379 - SongMetadataFixer - INFO - All metadata complete for: fakemink, Fakemink, Mag - Nobody.m4a
+2025-11-08 14:54:17,385 - SongMetadataFixer - INFO - All metadata complete for: test_empty_metadata.mp3
+2025-11-08 14:54:17,386 - SongMetadataFixer - INFO - Attempting to identify: test_no_metadata.mp3
+2025-11-08 14:54:17,415 - __main__ - INFO - → Radiohead_-_Backdrifts_Live.mp3: Could not identify song
+2025-11-08 14:54:17,415 - __main__ - INFO - ⟳ Analyzing: audio.m4a
+2025-11-08 14:54:17,415 - __main__ - INFO - ✓ Identified & filled: audio.m4a
+2025-11-08 14:54:17,416 - __main__ - INFO - ⟳ Analyzing: fakemink, Fakemink, Mag - Nobody.m4a
+2025-11-08 14:54:17,416 - __main__ - INFO - ✓ Identified & filled: fakemink, Fakemink, Mag - Nobody.m4a
+2025-11-08 14:54:17,416 - __main__ - INFO - ⟳ Analyzing: test_empty_metadata.mp3
+2025-11-08 14:54:17,416 - __main__ - INFO - ✓ Identified & filled: test_empty_metadata.mp3
+2025-11-08 14:54:17,416 - __main__ - INFO - ⟳ Analyzing: test_no_metadata.mp3
+2025-11-08 14:54:21,168 - SongMetadataFixer - INFO - ✓ Identified: maseratispaceswag - popstar (osama) (confidence: 50%, source: audd)
+2025-11-08 14:54:21,170 - SongMetadataFixer - INFO - Updated ID3 tags: test_no_metadata.mp3
+2025-11-08 14:54:21,170 - SongMetadataFixer - INFO - ✓ Filled metadata: test_no_metadata.mp3
+2025-11-08 14:54:21,226 - __main__ - INFO - ✓ Identified & filled: test_no_metadata.mp3
+2025-11-08 14:54:21,227 - __main__ - INFO - Identification complete: 10 filled, 3 unchanged.
+2025-11-08 14:56:03,431 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 14:56:03,433 - SongMetadataFixer - INFO - Attempting to identify: test_middle_sample.mp3
+2025-11-08 14:56:07,255 - SongMetadataFixer - INFO - ✓ Identified: maseratispaceswag - popstar (osama) (confidence: 50%, source: audd)
+2025-11-08 14:56:07,257 - SongMetadataFixer - INFO - Updated ID3 tags: test_middle_sample.mp3
+2025-11-08 14:56:07,257 - SongMetadataFixer - INFO - ✓ Filled metadata: test_middle_sample.mp3
+2025-11-08 14:56:19,460 - SongMetadataFixer - INFO - SongMetadataFixer initialized
+2025-11-08 14:56:19,462 - SongMetadataFixer - INFO - Attempting to identify: test_middle_sample.mp3
+2025-11-08 14:56:22,208 - SongMetadataFixer - INFO - ✓ Identified: maseratispaceswag - popstar (osama) (confidence: 50%, source: audd)
+2025-11-08 14:56:22,210 - SongMetadataFixer - INFO - Updated ID3 tags: test_middle_sample.mp3
+2025-11-08 14:56:22,210 - SongMetadataFixer - INFO - ✓ Filled metadata: test_middle_sample.mp3

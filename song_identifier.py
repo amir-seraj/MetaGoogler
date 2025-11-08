@@ -237,13 +237,24 @@ class SongIdentifier:
         
         AudD provides free song identification via their public API.
         Visit: https://audd.io/
+        
+        Sends a 12-second sample from the middle of the song for better accuracy
+        with live versions, remixes, and edits (avoids intro silence/skips).
         """
         try:
             logger.debug("Trying AudD free API method...")
             
-            # Read first 12 seconds of audio (sufficient for identification)
-            # This keeps the request size small
+            # Get file size to calculate middle position
+            file_size = audio_path.stat().st_size
+            
+            # Read 12 seconds from the middle of the audio file
+            # This avoids intros and is better for live/remix identification
             with open(audio_path, 'rb') as f:
+                # Seek to roughly the middle of the file
+                middle_position = file_size // 2
+                f.seek(middle_position)
+                
+                # Read 1.5MB (~12 seconds at high bitrate) from the middle
                 audio_chunk = f.read(1500000)  # ~1.5MB (enough for ~12 seconds at high bitrate)
             
             if not audio_chunk:

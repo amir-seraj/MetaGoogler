@@ -40,8 +40,8 @@ class MetadataFixerGUI:
         """Initialize the GUI application."""
         self.root = root
         self.root.title("Song Metadata Fixer")
-        self.root.geometry("1000x700")
-        self.root.minsize(800, 600)
+        self.root.geometry("1200x700")
+        self.root.minsize(1000, 600)
         
         # Initialize config and fixer
         self.config = ConfigManager()
@@ -49,6 +49,11 @@ class MetadataFixerGUI:
         self.ai_manager = AIManager()
         self.current_folder: Optional[Path] = None
         self.audio_files: list = []
+        
+        # Metadata editor state
+        self.selected_file: Optional[Path] = None
+        self.metadata_entries: dict = {}
+        self.current_metadata: dict = {}
         
         # Threading queue for thread-safe GUI updates
         self.update_queue: Queue = Queue()
@@ -99,6 +104,7 @@ class MetadataFixerGUI:
         main_frame.grid_rowconfigure(0, weight=1)
         main_frame.grid_columnconfigure(0, weight=1)
         main_frame.grid_columnconfigure(1, weight=0)
+        main_frame.grid_columnconfigure(2, weight=0)
         
         # --- Left side: File list ---
         left_frame = ctk.CTkFrame(main_frame)
@@ -131,6 +137,7 @@ class MetadataFixerGUI:
             highlightthickness=0
         )
         self.file_listbox.grid(row=0, column=0, sticky="nsew")
+        self.file_listbox.bind('<<ListboxSelect>>', self._on_file_selected)
         scrollbar.configure(command=self.file_listbox.yview)
         
         # File info section
@@ -145,6 +152,57 @@ class MetadataFixerGUI:
             text_color="gray"
         )
         self.file_count_label.grid(row=0, column=0, sticky="w")
+        
+        # --- Middle side: Metadata Sidebar ---
+        sidebar_frame = ctk.CTkFrame(main_frame, width=300)
+        sidebar_frame.grid(row=0, column=2, sticky="nsew", padx=(5, 0))
+        sidebar_frame.grid_rowconfigure(1, weight=1)
+        sidebar_frame.grid_columnconfigure(0, weight=1)
+        sidebar_frame.grid_propagate(False)
+        
+        ctk.CTkLabel(
+            sidebar_frame,
+            text="Metadata Editor:",
+            font=("Arial", 12, "bold")
+        ).grid(row=0, column=0, sticky="w", pady=(0, 10))
+        
+        # Metadata editor frame
+        editor_frame = ctk.CTkFrame(sidebar_frame)
+        editor_frame.grid(row=1, column=0, sticky="nsew")
+        editor_frame.grid_rowconfigure(0, weight=1)
+        editor_frame.grid_columnconfigure(0, weight=1)
+        
+        # Scrollable metadata editor
+        editor_scroll = ctk.CTkScrollbar(editor_frame)
+        editor_scroll.grid(row=0, column=1, sticky="ns")
+        
+        self.metadata_canvas = tk.Canvas(
+            editor_frame,
+            bg="#1a1a1a",
+            highlightthickness=0,
+            scrollregion=(0, 0, 280, 500)
+        )
+        self.metadata_canvas.grid(row=0, column=0, sticky="nsew")
+        editor_scroll.configure(command=self.metadata_canvas.yview)
+        self.metadata_canvas.configure(yscrollcommand=editor_scroll.set)
+        
+        self.metadata_frame = ctk.CTkFrame(self.metadata_canvas)
+        self.metadata_window = self.metadata_canvas.create_window(
+            (0, 0), window=self.metadata_frame, anchor="nw", width=280
+        )
+        
+        self.metadata_canvas.bind("<Configure>", self._on_canvas_configure)
+        
+        # Save metadata button
+        save_btn = ctk.CTkButton(
+            sidebar_frame,
+            text="💾 Save Metadata & Rename",
+            command=self._on_save_metadata,
+            height=35,
+            font=("Arial", 10, "bold"),
+            fg_color="#00aa00"
+        )
+        save_btn.grid(row=2, column=0, sticky="ew", pady=(10, 0))
         
         # --- Right side: Controls ---
         right_frame = ctk.CTkFrame(main_frame)
@@ -732,6 +790,147 @@ class MetadataFixerGUI:
         
         thread = Thread(target=thread_worker, daemon=True)
         thread.start()
+    
+    def _on_canvas_configure(self, event):
+        """Configure canvas scrollregion."""
+        self.metadata_canvas.configure(scrollregion=self.metadata_canvas.bbox("all"))
+    
+    def _on_file_selected(self, event):
+        """Handle file selection in listbox."""
+        selection = self.file_listbox.curselection()
+        if not selection:
+            return
+        
+        self.selected_file = self.audio_files[selection[0]]
+        self._load_metadata_editor()
+    
+    def _load_metadata_editor(self):
+        """Load metadata editor for selected file."""
+        if not self.selected_file:
+            return
+        
+        # Get metadata
+        try:
+            md = self.fixer.get_metadata(self.selected_file)
+            # Ensure we always have a dict to avoid NoneType errors in the editor
+            self.current_metadata = md or {}
+        except Exception as e:
+            self._log(f"Error loading metadata: {e}")
+            return
+        
+        # Clear previous entries
+        for widget in self.metadata_frame.winfo_children():
+            widget.destroy()
+        self.metadata_entries.clear()
+        
+        # Display filename
+        filename_label = ctk.CTkLabel(
+            self.metadata_frame,
+            text="File:",
+            font=("Arial", 10, "bold"),
+            text_color="#ff9500"
+        )
+        filename_label.pack(anchor="w", pady=(5, 2), padx=10)
+        
+        filename_value = ctk.CTkLabel(
+            self.metadata_frame,
+            text=self.selected_file.name,
+            font=("Courier", 9),
+            text_color="#00ff00",
+            wraplength=250
+        )
+        filename_value.pack(anchor="w", padx=10, pady=(0, 10))
+        
+        # Create editable fields
+        fields = ['title', 'artist', 'album', 'date', 'genre', 'tracknumber']
+        
+        for field in fields:
+            # Label
+            label = ctk.CTkLabel(
+                self.metadata_frame,
+                text=field.capitalize() + ":",
+                font=("Arial", 10, "bold")
+            )
+            label.pack(anchor="w", pady=(5, 2), padx=10)
+            
+            # Entry
+            value = self.current_metadata.get(field, "Unknown")
+            if value == "Unknown" or not value:
+                value = ""
+            
+            entry = ctk.CTkEntry(
+                self.metadata_frame,
+                font=("Courier", 9),
+                width=260
+            )
+            entry.insert(0, str(value))
+            entry.pack(anchor="w", padx=10, pady=(0, 5))
+            
+            self.metadata_entries[field] = entry
+        
+        # Update canvas scroll region
+        self.metadata_frame.update_idletasks()
+        self.metadata_canvas.configure(scrollregion=self.metadata_canvas.bbox("all"))
+    
+    def _on_save_metadata(self):
+        """Save edited metadata and rename file if needed."""
+        if not self.selected_file:
+            messagebox.showwarning("Warning", "No file selected")
+            return
+        
+        try:
+            # Collect edited metadata
+            new_metadata = {}
+            for field, entry in self.metadata_entries.items():
+                value = entry.get().strip()
+                if value and value.lower() != 'unknown':
+                    new_metadata[field] = value
+                else:
+                    new_metadata[field] = 'Unknown'
+            
+            # Save metadata
+            result = self.fixer.set_metadata(self.selected_file, new_metadata)
+            
+            if result.success:
+                self._log(f"✓ Metadata saved: {self.selected_file.name}")
+                
+                # Generate new filename based on metadata
+                title = new_metadata.get('title', 'Unknown')
+                artist = new_metadata.get('artist', 'Unknown')
+                
+                if title and title != 'Unknown' and artist and artist != 'Unknown':
+                    # Create new filename: "Artist - Title.ext"
+                    ext = self.selected_file.suffix
+                    new_filename = f"{artist} - {title}{ext}"
+                    
+                    # Remove invalid characters
+                    invalid_chars = r'<>:"/\|?*'
+                    for char in invalid_chars:
+                        new_filename = new_filename.replace(char, '_')
+                    
+                    new_path = self.selected_file.parent / new_filename
+                    
+                    # Rename file if new name is different
+                    if new_path != self.selected_file:
+                        try:
+                            self.selected_file.rename(new_path)
+                            self._log(f"📝 Renamed: {new_filename}")
+                            self.selected_file = new_path
+                            
+                            # Refresh file list
+                            self._on_refresh_files()
+                        except Exception as e:
+                            messagebox.showerror("Rename Error", f"Could not rename file: {e}")
+                            self._log(f"❌ Failed to rename: {e}")
+                
+                messagebox.showinfo("Success", "Metadata saved successfully!\nFile renamed based on artist and title.")
+            else:
+                messagebox.showerror("Error", result.message)
+                self._log(f"❌ Failed to save metadata: {result.message}")
+        
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save metadata: {e}")
+            self._log(f"Error: {e}")
     
     def _start_queue_monitor(self):
         """Monitor the update queue for thread-safe GUI updates."""
