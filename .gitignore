@@ -45,6 +45,9 @@ env/
 build/
 dist/
 *.spec
+*.tar.gz
+*.zip
+*.dmg
 
 # Testing
 .coverage
