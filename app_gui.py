@@ -554,6 +554,8 @@ class MetadataFixerGUI:
     
     def _identify_worker(self, progress_callback: Callable, log_callback: Callable, files: list):
         """Worker thread for song identification."""
+        from pathlib import Path
+        
         total = len(files)
         identified_count = 0
         filled_count = 0
@@ -563,23 +565,27 @@ class MetadataFixerGUI:
                 break
             
             try:
-                log_callback(f"⟳ Analyzing: {file.name}")
+                # Ensure file is a Path object
+                file_path = Path(file) if isinstance(file, str) else file
+                
+                log_callback(f"⟳ Analyzing: {file_path.name}")
                 
                 # Attempt identification and metadata filling
-                result = self.fixer.identify_and_fill_metadata(str(file), overwrite_existing=False)
+                result = self.fixer.identify_and_fill_metadata(file_path, overwrite_existing=False)
                 
                 if result.success:
                     filled_count += 1
                     identified_count += 1
-                    log_callback(f"✓ Identified & filled: {file.name}")
+                    log_callback(f"✓ Identified & filled: {file_path.name}")
                 else:
-                    log_callback(f"→ {file.name}: {result.message}")
+                    log_callback(f"→ {file_path.name}: {result.message}")
                 
                 progress = (idx + 1) / total
                 progress_callback(progress, f"Processed {idx + 1}/{total}")
             
             except Exception as e:
-                log_callback(f"✗ {file.name}: {e}")
+                file_name = file if isinstance(file, str) else file.name
+                log_callback(f"✗ {file_name}: {e}")
         
         summary = f"Identification complete: {filled_count} filled, {total - filled_count} unchanged."
         log_callback(summary)

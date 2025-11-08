@@ -166,9 +166,9 @@ class SongIdentifier:
         
         # Try multiple methods in order of reliability
         methods = [
-            self._identify_by_musicbrainz_acoustic,
-            self._identify_by_acrcloud,
-            self._identify_by_spotify_search,
+            self._identify_by_acrcloud,  # Try AudD API first (most reliable for audio)
+            self._identify_by_musicbrainz_acoustic,  # Filename parsing + Spotify
+            self._identify_by_spotify_search,  # Direct metadata search
         ]
         
         for method in methods:
@@ -193,7 +193,30 @@ class SongIdentifier:
         try:
             logger.debug("Trying MusicBrainz Acoustic Fingerprint method...")
             
-            # Generate fingerprint from audio
+            # Try to identify using filename as a hint
+            filename = audio_path.stem  # Remove extension
+            
+            # Common patterns: "Artist - Title" or "Title - Artist"
+            if ' - ' in filename:
+                parts = filename.split(' - ')
+                if len(parts) >= 2:
+                    # Try both interpretations
+                    artist, title = parts[0].strip(), parts[1].strip()
+                    
+                    # Remove track numbers and extra info
+                    artist = artist.lstrip('0123456789. ')
+                    title = title.rstrip('()[]').strip()
+                    
+                    if artist and title and artist.lower() != 'unknown' and title.lower() != 'unknown':
+                        logger.debug(f"Parsing filename: artist='{artist}', title='{title}'")
+                        
+                        # Search Spotify to validate and get album info
+                        result = self._search_spotify(f"{artist} {title}")
+                        if result:
+                            result.source = "Filename + Spotify"
+                            return result
+            
+            # Generate fingerprint from audio as fallback
             fingerprint = AudioFingerprinter.extract_fingerprint(audio_path, duration=15)
             
             if not fingerprint:
@@ -210,25 +233,54 @@ class SongIdentifier:
     
     def _identify_by_acrcloud(self, audio_path: Path) -> Optional[SongIdentification]:
         """
-        Identify using ACRCloud free API (limited requests).
+        Identify using AudD free API - works without authentication!
         
-        Note: Free tier is limited. Requires API key setup.
-        Register at: https://www.acrcloud.com/
+        AudD provides free song identification via their public API.
+        Visit: https://audd.io/
         """
         try:
-            logger.debug("Trying ACRCloud method...")
+            logger.debug("Trying AudD free API method...")
             
-            # Read first 15 seconds of audio
+            # Read first 12 seconds of audio (sufficient for identification)
+            # This keeps the request size small
             with open(audio_path, 'rb') as f:
-                audio_sample = f.read(500000)  # ~500KB sample
+                audio_chunk = f.read(1500000)  # ~1.5MB (enough for ~12 seconds at high bitrate)
             
-            # ACRCloud would require API key setup
-            # This shows the structure for when configured
-            logger.debug("ACRCloud method - requires API key configuration")
+            if not audio_chunk:
+                return None
+            
+            # Use AudD's free API endpoint
+            url = "https://api.audd.io/"
+            files = {
+                'file': audio_chunk,
+                'api_token': 'free'  # Free tier
+            }
+            
+            response = self.session.post(url, files=files, timeout=self.timeout)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check if identification was successful
+                if data.get('status') == 'success' and data.get('result'):
+                    result_data = data['result']
+                    
+                    return SongIdentification(
+                        title=result_data.get('title', 'Unknown'),
+                        artist=result_data.get('artist', 'Unknown'),
+                        album=result_data.get('album'),
+                        duration=result_data.get('duration'),
+                        confidence=float(result_data.get('score', 0.5) or 0.5),
+                        source='audd',
+                        isrc=result_data.get('isrc'),
+                        spotify_id=result_data.get('spotify_id'),
+                    )
+            
+            logger.debug(f"AudD API response: {response.status_code}")
             return None
         
         except Exception as e:
-            logger.debug(f"ACRCloud method failed: {e}")
+            logger.debug(f"AudD method failed: {e}")
             return None
     
     def _identify_by_spotify_search(self, audio_path: Path) -> Optional[SongIdentification]:

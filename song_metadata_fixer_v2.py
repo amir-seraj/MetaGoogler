@@ -349,12 +349,16 @@ class SongMetadataFixer:
         3. Using ACRCloud (if configured)
         
         Args:
-            file_path: Path to audio file
+            file_path: Path to audio file (or string path)
             
         Returns:
             Dictionary with identified metadata (title, artist, album, etc.)
             Returns None if identification fails
         """
+        # Convert string to Path if needed
+        if isinstance(file_path, str):
+            file_path = Path(file_path)
+        
         if not IDENTIFIER_AVAILABLE:
             self.logger.warning("Song identifier not available - install: pip install librosa")
             return None
@@ -399,12 +403,16 @@ class SongMetadataFixer:
         Identify song and fill in missing metadata fields.
         
         Args:
-            file_path: Path to audio file
+            file_path: Path to audio file (or string path)
             overwrite_existing: If True, overwrite existing metadata with identified data
             
         Returns:
             OperationResult with success status
         """
+        # Convert string to Path if needed
+        if isinstance(file_path, str):
+            file_path = Path(file_path)
+        
         try:
             # Get current metadata
             current = self.get_metadata(file_path)
