@@ -80,9 +80,11 @@ metadatafixer-gui.exe
 *.temp
 .tmp/
 
-# Ignore generated distributions (but keep source)
-Song_Metadata_Fixer_v1.0.tar.gz
-Song_Metadata_Fixer_v1.0.zip
+# Ignore generated distributions and archives (too large for GitHub)
+Song_Metadata_Fixer_v*.tar.gz
+Song_Metadata_Fixer_v*.zip
+*.tar.gz
+*.zip
 
 # Audio files and media
 *.mp3
