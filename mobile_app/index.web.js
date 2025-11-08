@@ -1,5 +1,5 @@
 import { registerRootComponent } from 'expo';
-import AppWeb from './src/AppWeb';
+import AppWebInteractive from './src/AppWebInteractive';
 
 // Register the root component for web
-registerRootComponent(AppWeb);
+registerRootComponent(AppWebInteractive);

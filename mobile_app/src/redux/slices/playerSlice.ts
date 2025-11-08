@@ -23,7 +23,10 @@ const playerSlice = createSlice({
       state.queueIndex = action.payload.startIndex || 0;
       state.currentTrackId = state.queue[state.queueIndex]?.id || null;
     },
-    playTrack: (state) => {
+    playTrack: (state, action: PayloadAction<string | null>) => {
+      if (action.payload) {
+        state.currentTrackId = action.payload;
+      }
       state.isPlaying = true;
     },
     pauseTrack: (state) => {
