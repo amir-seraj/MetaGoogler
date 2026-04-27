@@ -17,12 +17,13 @@ const librarySlice = createSlice({
   reducers: {
     setSongs: (state, action: PayloadAction<Song[]>) => {
       state.allSongs = action.payload;
-      // Extract artists
-      state.artists = Array.from(new Set(action.payload.map(s => s.artist)));
-      // Extract albums
-      state.albums = Array.from(new Set(action.payload.map(s => s.album).filter(Boolean)));
-      // Extract genres
-      state.genres = Array.from(new Set(action.payload.map(s => s.genre).filter(Boolean)));
+      state.artists = Array.from(new Set(action.payload.map((s) => s.artist)));
+      state.albums = Array.from(
+        new Set(action.payload.map((s) => s.album).filter((a): a is string => Boolean(a))),
+      );
+      state.genres = Array.from(
+        new Set(action.payload.map((s) => s.genre).filter((g): g is string => Boolean(g))),
+      );
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;

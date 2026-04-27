@@ -1,6 +1,7 @@
 // src/redux/slices/playerSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PlayerState, Song } from '../../types/index';
+import type { RootState } from '../store';
 
 const initialState: PlayerState = {
   currentTrackId: null,
@@ -22,10 +23,16 @@ const playerSlice = createSlice({
       state.queue = action.payload.songs;
       state.queueIndex = action.payload.startIndex || 0;
       state.currentTrackId = state.queue[state.queueIndex]?.id || null;
+      state.position = 0;
+      state.duration = 0;
     },
-    playTrack: (state, action: PayloadAction<string | null>) => {
+    playTrack: (state, action: PayloadAction<string | undefined>) => {
       if (action.payload) {
-        state.currentTrackId = action.payload;
+        const idx = state.queue.findIndex((s) => s.id === action.payload);
+        if (idx >= 0) {
+          state.queueIndex = idx;
+          state.currentTrackId = action.payload;
+        }
       }
       state.isPlaying = true;
     },
@@ -33,15 +40,31 @@ const playerSlice = createSlice({
       state.isPlaying = false;
     },
     skipToNext: (state) => {
+      if (state.repeatMode === 'one') {
+        state.position = 0;
+        return;
+      }
       if (state.queueIndex < state.queue.length - 1) {
         state.queueIndex += 1;
-        state.currentTrackId = state.queue[state.queueIndex]?.id || null;
+      } else if (state.repeatMode === 'all' && state.queue.length > 0) {
+        state.queueIndex = 0;
+      } else {
+        state.isPlaying = false;
+        return;
       }
+      state.currentTrackId = state.queue[state.queueIndex]?.id || null;
+      state.position = 0;
+      state.isPlaying = true;
     },
     skipToPrevious: (state) => {
+      if (state.position > 3000) {
+        state.position = 0;
+        return;
+      }
       if (state.queueIndex > 0) {
         state.queueIndex -= 1;
         state.currentTrackId = state.queue[state.queueIndex]?.id || null;
+        state.position = 0;
       }
     },
     setShuffle: (state, action: PayloadAction<boolean>) => {
@@ -61,6 +84,12 @@ const playerSlice = createSlice({
     },
   },
 });
+
+export const selectCurrentTrack = (state: RootState): Song | null => {
+  const { currentTrackId, queue } = state.player;
+  if (!currentTrackId) return null;
+  return queue.find((s) => s.id === currentTrackId) ?? null;
+};
 
 export const {
   setQueue,

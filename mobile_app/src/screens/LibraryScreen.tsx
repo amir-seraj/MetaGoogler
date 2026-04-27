@@ -4,14 +4,14 @@ import { View, StyleSheet, FlatList } from 'react-native';
 import { Button, Text, Searchbar } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import SongListItem from '../components/SongListItem';
-import { playTrack } from '../redux/slices/playerSlice';
+import { playTrack, setQueue } from '../redux/slices/playerSlice';
 
 type ViewMode = 'songs' | 'artists' | 'albums' | 'genres';
 
 export default function LibraryScreen() {
   const [viewMode, setViewMode] = useState<ViewMode>('songs');
   const [searchQuery, setSearchQuery] = useState('');
-  const { songs } = useAppSelector((state) => state.library);
+  const songs = useAppSelector((state) => state.library.allSongs);
   const dispatch = useAppDispatch();
 
   const filteredSongs = songs.filter(
@@ -19,6 +19,12 @@ export default function LibraryScreen() {
       song.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       song.artist.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const playSong = (songId: string) => {
+    const startIndex = filteredSongs.findIndex((s) => s.id === songId);
+    dispatch(setQueue({ songs: filteredSongs, startIndex: Math.max(0, startIndex) }));
+    dispatch(playTrack(songId));
+  };
 
   const getArtists = () => {
     const artists = new Map<string, number>();
@@ -63,7 +69,7 @@ export default function LibraryScreen() {
             renderItem={({ item }) => (
               <SongListItem
                 song={item}
-                onPress={() => dispatch(playTrack(item))}
+                onPress={() => playSong(item.id)}
               />
             )}
             ListEmptyComponent={

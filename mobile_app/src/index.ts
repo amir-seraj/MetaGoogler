@@ -50,6 +50,7 @@ export { default as SongListItem } from './components/SongListItem';
 
 // Services
 export { audioService, AudioService } from './services/audioService';
+export { usePlayerBridge } from './services/usePlayerBridge';
 export {
   auddService,
   AuddService,

@@ -1,16 +1,15 @@
 // src/screens/NowPlayingScreen.tsx
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, ProgressBar } from 'react-native-paper';
-import { useAppSelector, useAppDispatch } from '../redux/hooks';
+import { useAppSelector } from '../redux/hooks';
+import { selectCurrentTrack } from '../redux/slices/playerSlice';
 import PlayerControls from '../components/PlayerControls';
 import AlbumArt from '../components/AlbumArt';
 
 export default function NowPlayingScreen() {
-  const dispatch = useAppDispatch();
-  const { currentTrack, isPlaying, position, duration } = useAppSelector(
-    (state) => state.player
-  );
+  const currentTrack = useAppSelector(selectCurrentTrack);
+  const { isPlaying, position, duration } = useAppSelector((state) => state.player);
 
   const progress = duration ? position / duration : 0;
 

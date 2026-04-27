@@ -23,11 +23,8 @@ export default function PlayerControls({ isPlaying }: PlayerControlsProps) {
   const handlePlayPause = () => {
     if (isPlaying) {
       dispatch(pauseTrack());
-    } else {
-      const firstTrack = queue[0];
-      if (firstTrack) {
-        dispatch(playTrack(firstTrack));
-      }
+    } else if (queue.length > 0) {
+      dispatch(playTrack(undefined));
     }
   };
 
